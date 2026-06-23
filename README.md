@@ -1,25 +1,3 @@
-# Usage & License Notice
-
-This project is created by **M Sri Anshu Venkat**.
-
-Allowed:
-
-- Learning and reference
-- Understanding implementation
-
-Not Allowed:
-
-- Copying and submitting as your own project
-- Renaming and re-uploading
-- Commercial use or resale
-
-Mandatory Credit:
-If you use this project, you MUST give proper credit:
-
-Original Author: M Sri Anshu Venkat
-GitHub: https://github.com/msav2007/college-management-system
-
-Unauthorized use or plagiarism is strictly prohibited and may lead to copyright action.
 
 # College Management System (Role-Based)
 
