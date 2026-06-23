@@ -1,24 +1,175 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700&display=swap");
+/* UI/UX Pro Max: Inter — #1 recommended for dashboards & admin panels (Minimal Swiss pairing).
+   font-display:swap prevents FOIT on slow Android connections. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&display=swap");
 
 :root {
+  /* ----- Brand / primary ramp ----- */
   --primary: #2563eb;
   --primary-soft: rgba(37, 99, 235, 0.12);
   --primary-deep: #1d4ed8;
+  --primary-bright: #3b82f6;
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-ring: rgba(37, 99, 235, 0.38);
+
+  /* ----- Semantic ----- */
   --success: #0f9f6e;
+  --success-bright: #10b981;
   --warning: #d97706;
   --danger: #dc2626;
-  --background: #f8fafc;
+  --danger-bright: #ef4444;
+
+  /* ----- Neutrals / surfaces ----- */
+  --ink: #0b1220;
+  --text: #0f172a;
+  --text-soft: #334155;
+  --muted: #64748b;
+  --muted-soft: #94a3b8;
+  --background: #eef2f8;
+  --canvas: #eef2f8;
   --surface: #ffffff;
   --surface-muted: #f1f5f9;
-  --text: #0f172a;
-  --muted: #64748b;
+  --surface-sunken: #f8fafc;
   --border: #e2e8f0;
-  --shadow-sm: 0 10px 24px rgba(15, 23, 42, 0.05);
-  --shadow-lg: 0 24px 60px rgba(15, 23, 42, 0.08);
-  --radius-sm: 12px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
+  --border-strong: #cbd5e1;
+  --hairline: rgba(15, 23, 42, 0.08);
+
+  /* ----- Multi-dimensional accents ----- */
+  --accent-blue: #3b82f6;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-violet: #8b5cf6;
+  --accent-rose: #f43f5e;
+
+  /* ----- Layered, realistic shadows (key + ambient light) ----- */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 2px 6px rgba(15, 23, 42, 0.06);
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 18px -10px rgba(15, 23, 42, 0.18);
+  --shadow-md: 0 4px 10px -3px rgba(15, 23, 42, 0.08), 0 14px 28px -10px rgba(15, 23, 42, 0.16);
+  --shadow-lg: 0 12px 24px -8px rgba(15, 23, 42, 0.12), 0 28px 56px -16px rgba(15, 23, 42, 0.20);
+  --shadow-primary: 0 8px 18px -6px rgba(37, 99, 235, 0.5);
+
+  /* ----- Radii ----- */
+  --radius-xs: 8px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  /* ----- Type (UI/UX Pro Max: Inter for dashboards — clean, legible, renders perfectly on Android) ----- */
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* ----- Spacing scale ----- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
   --sidebar-width: 280px;
+
+  /* ----- Motion ----- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.5, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 0.15s;
+  --dur: 0.24s;
+  --dur-slow: 0.4s;
+  --anim-duration: 0.5s;
+  --anim-easing: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ========== FONT FEATURE SETTINGS (UI/UX Pro Max — Inter optimised) ========== */
+/* Tabular nums prevent layout shifts in stats/numbers; kern+liga = crisp Inter */
+* { font-feature-settings: "kern" 1; }
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* ========== KEYFRAME ANIMATIONS ========== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes floatCard {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes progressShrink {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.25); }
+  50% { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(59, 130, 246, 0.3); }
+  50% { border-color: rgba(59, 130, 246, 0.6); }
 }
 
 * {
@@ -27,14 +178,25 @@
 
 html {
   scroll-behavior: smooth;
+  /* Prevent horizontal scroll on Android */
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  /* No background-attachment:fixed — causes GPU jank on Android Chrome */
   background: #f8fafc;
   color: var(--text);
-  font-family: "Manrope", "Segoe UI", sans-serif;
+  /* UI/UX Pro Max: Single Inter font for consistent rendering across Android versions */
+  font-family: var(--font-sans);
+  font-size: 16px; /* Base 16px prevents Android auto-zoom on inputs */
+  line-height: 1.5;
+  /* Smooth momentum scrolling on Android WebView */
+  -webkit-overflow-scrolling: touch;
+  /* Prevent Android Chrome from inflating small fonts */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 a {
@@ -46,7 +208,8 @@ button,
 input,
 select,
 textarea {
-  font: inherit;
+  font: inherit; /* Inherit Inter from body — prevents Android default system font on inputs */
+  font-size: 1rem; /* 16px minimum — prevents Android auto-zoom on focus */
 }
 
 button {
@@ -65,9 +228,12 @@ img {
 .landing-page,
 .auth-page {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 20px;
+  /* Allow page to scroll naturally when soft-keyboard opens on Android */
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .container {
@@ -108,7 +274,7 @@ body.auth-page[data-page="login"] {
 .hero-copy h1,
 .auth-brand h1 {
   margin: 16px 0 12px;
-  font-family: "Sora", sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(2.1rem, 4vw, 3.6rem);
   line-height: 1.1;
 }
@@ -185,7 +351,7 @@ body.auth-page[data-page="login"] {
 .preview-card h2,
 .panel-heading h2 {
   margin: 8px 0 10px;
-  font-family: "Sora", sans-serif;
+  font-family: var(--font-display);
   font-size: 1.2rem;
 }
 
@@ -232,7 +398,7 @@ body.auth-page[data-page="login"] {
 }
 
 .brand-link {
-  font-family: "Sora", sans-serif;
+  font-family: var(--font-display);
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--primary);
@@ -261,7 +427,8 @@ body.auth-page[data-page="login"] {
   max-width: 1350px;
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(430px, 0.9fr);
-  min-height: 720px;
+  /* Remove hard min-height — it forces vertical scroll on small Android screens */
+  min-height: auto;
   margin: 40px auto;
   background: #ffffff;
   border: 1px solid rgba(226, 232, 240, 0.9);
@@ -353,7 +520,7 @@ body.auth-page[data-page="login"] {
   border-radius: 8px;
   background: #2563eb;
   color: #ffffff;
-  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -394,7 +561,7 @@ body.auth-page[data-page="login"] {
 }
 
 .login-brand-wordmark {
-  font-family: "Sora", sans-serif;
+  font-family: var(--font-display);
   color: #e2e8f0;
   font-size: 1rem;
   font-weight: 600;
@@ -455,7 +622,7 @@ body.auth-page[data-page="login"] {
 .login-brand-copy h1 {
   margin: 0;
   max-width: 480px;
-  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-family: var(--font-sans);
   font-size: clamp(2.45rem, 4vw, 3.65rem);
   line-height: 1.06;
   letter-spacing: -0.03em;
@@ -500,7 +667,7 @@ body.auth-page[data-page="login"] {
   font-size: 1rem;
   font-weight: 800;
   color: #f8fafc;
-  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-family: var(--font-sans);
 }
 
 .login-feature-card p {
@@ -569,7 +736,7 @@ body.auth-page[data-page="login"] {
 
 .login-form-heading h2 {
   margin: 0;
-  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-family: var(--font-sans);
   font-size: 1.85rem;
   line-height: 1.1;
   font-weight: 800;
@@ -845,6 +1012,7 @@ body.auth-page[data-page="login"] {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  line-height: 1;
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
@@ -956,7 +1124,7 @@ body.auth-page[data-page="login"] {
 
 .sidebar-brand h2 {
   margin: 0 0 4px;
-  font-family: "Sora", sans-serif;
+  font-family: var(--font-display);
   font-size: 1.15rem;
 }
 
@@ -1060,7 +1228,7 @@ body.auth-page[data-page="login"] {
 
 .topbar-title h1 {
   margin: 4px 0 0;
-  font-family: "Sora", sans-serif;
+  font-family: var(--font-display);
   font-size: 1.7rem;
 }
 
@@ -1074,12 +1242,15 @@ body.auth-page[data-page="login"] {
 
 .menu-toggle {
   display: none;
+  align-items: center;
+  justify-content: center;
   min-height: 42px;
   padding: 0 14px;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface);
   font-weight: 800;
+  line-height: 1;
 }
 
 .role-pill,
@@ -1177,7 +1348,7 @@ body.auth-page[data-page="login"] {
 }
 
 .stat-card strong {
-  font-family: "Sora", sans-serif;
+  font-family: var(--font-display);
   font-size: 1.95rem;
 }
 
@@ -1364,7 +1535,8 @@ body.auth-page[data-page="login"] {
 .toast-stack {
   position: fixed;
   right: 20px;
-  bottom: 20px;
+  /* Safe-area inset for Android notch & nav bar */
+  bottom: max(20px, env(safe-area-inset-bottom, 20px));
   display: grid;
   gap: 12px;
   z-index: 50;
@@ -1388,7 +1560,7 @@ body.app-page {
   padding: 0;
   background: #f1f5f9;
   color: #0f172a;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-sans);
 }
 
 .app-page *,
@@ -1408,6 +1580,7 @@ body.app-page {
   inset: 0 auto 0 0;
   width: var(--sidebar-width);
   height: 100vh;
+  height: 100dvh;
   padding: 24px 16px;
   background: #0f172a;
   border: none;
@@ -1417,12 +1590,18 @@ body.app-page {
   -webkit-backdrop-filter: none;
   color: #cbd5f5;
   gap: 20px;
-  transition: transform 0.2s ease-in-out;
+  /* translate3d instead of translateX — keeps sidebar on GPU compositor layer */
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  /* Safe-area padding for Android notch/nav bar */
+  padding-bottom: max(24px, env(safe-area-inset-bottom, 24px));
+  padding-left: max(16px, env(safe-area-inset-left, 16px));
 }
 
 .app-page .content-shell {
   grid-column: 2;
   min-height: 100vh;
+  min-height: 100dvh;
   background: #f1f5f9;
   border: none;
   border-radius: 0;
@@ -1430,8 +1609,10 @@ body.app-page {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   min-width: 0;
-  overflow-x: hidden;
-  padding: 0 28px 28px;
+  /* clip instead of overflow-x:hidden — prevents scroll-trap on Android */
+  overflow: clip;
+  /* Safe-area right padding for Android edge-to-edge display */
+  padding: 0 max(28px, env(safe-area-inset-right, 28px)) max(28px, env(safe-area-inset-bottom, 28px));
 }
 
 .app-page .content-shell > .topbar,
@@ -1449,10 +1630,10 @@ body.app-page {
 }
 
 .app-page .sidebar-brand-row {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 0;
-  width: fit-content;
+  max-width: 100%;
 }
 
 .app-page .sidebar-brand-mark {
@@ -1483,10 +1664,13 @@ body.app-page {
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.04em;
+  max-width: 100%;
 }
 
 .app-page .sidebar-brand-pill-text {
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .app-page .sidebar-brand h2 {
@@ -1520,6 +1704,7 @@ body.app-page {
   gap: 6px;
 }
 
+
 .app-page .sidebar-link {
   display: flex;
   align-items: center;
@@ -1528,6 +1713,7 @@ body.app-page {
   border-radius: 10px;
   color: #cbd5f5;
   font-weight: 600;
+  line-height: 1;
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
@@ -1810,7 +1996,7 @@ body.app-page {
   border-radius: 8px;
   background: #ffffff;
   color: #0f172a;
-  transition: all 0.2s ease-in-out;
+  transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .app-page .field select,
@@ -1851,7 +2037,7 @@ body.app-page {
   padding: 10px 16px;
   border-radius: 10px;
   font-weight: 600;
-  transition: all 0.2s ease-in-out;
+  transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .app-page .button:hover {
@@ -1912,7 +2098,7 @@ body.app-page {
   border-radius: 10px;
   border: 1px solid #e2e8f0;
   background: #ffffff;
-  transition: all 0.2s ease-in-out;
+  transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .app-page .icon-action:hover {
@@ -1957,8 +2143,20 @@ body.app-page {
 .app-page .data-table th,
 .app-page .data-table td {
   padding: 14px 16px;
-  overflow-wrap: anywhere;
   line-height: 1.5;
+}
+
+/* Headers are short, known labels — never break them mid-word; the table
+   already scrolls horizontally for narrow viewports via .table-wrap. */
+.app-page .data-table th {
+  white-space: nowrap;
+}
+
+/* Body cells may hold longer free text (names, emails) — wrap at natural
+   word boundaries only. Breaking mid-word (e.g. "REGI/STR/ATION") reads
+   as broken, especially on narrow Android screens. */
+.app-page .data-table td {
+  overflow-wrap: break-word;
 }
 
 .app-page .data-table th {
@@ -2164,7 +2362,7 @@ body.app-page {
 .app-page input,
 .app-page select,
 .app-page textarea {
-  transition: all 0.2s ease-in-out;
+  transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 @media (max-width: 1180px) {
@@ -2198,19 +2396,27 @@ body.app-page {
     top: 20px;
     bottom: 20px;
     width: min(var(--sidebar-width), calc(100vw - 40px));
-    transform: translateX(-115%);
-    transition: transform 0.25s ease;
+    /* translate3d for GPU layer — prevents jank on Android scroll */
+    transform: translate3d(-115%, 0, 0);
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: 40;
     height: auto;
+    will-change: transform;
   }
 
   .sidebar.open {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 
   .menu-toggle,
   .mobile-overlay.open {
     display: inline-flex;
+  }
+
+  /* Lock background scroll while the off-canvas drawer is open — otherwise
+     the page scrolls underneath the fixed-position sidebar on touch. */
+  body.nav-open {
+    overflow: hidden;
   }
 
   .mobile-overlay {
@@ -2315,13 +2521,15 @@ body.app-page {
   .app-page .sidebar {
     inset: 0 auto 0 0;
     width: min(var(--sidebar-width), 86vw);
-    transform: translateX(-115%);
+    /* translate3d: GPU compositor — smooth on Android */
+    transform: translate3d(-115%, 0, 0);
     border-radius: 0 16px 16px 0;
     z-index: 40;
+    will-change: transform;
   }
 
   .app-page .sidebar.open {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -2365,4 +2573,1497 @@ body.app-page {
   .app-page .roster-item {
     grid-template-columns: 1fr;
   }
+}
+
+/* ==========================================================
+   UI/UX ENHANCEMENTS — Premium Micro-interactions & Polish
+   ========================================================== */
+
+/* --- Page Content Entrance Animation --- */
+.page-body {
+  animation: fadeInUp var(--anim-duration) var(--anim-easing) both;
+}
+
+.app-page .page-body {
+  animation: fadeInUp 0.45s var(--anim-easing) both;
+}
+
+/* --- Staggered Card Animations --- */
+.stats-grid > .stat-card {
+  opacity: 0;
+  animation: fadeInUp 0.5s var(--anim-easing) both;
+}
+.stats-grid > .stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stats-grid > .stat-card:nth-child(2) { animation-delay: 0.12s; }
+.stats-grid > .stat-card:nth-child(3) { animation-delay: 0.19s; }
+.stats-grid > .stat-card:nth-child(4) { animation-delay: 0.26s; }
+
+.section-grid > .panel,
+.section-grid > .table-card {
+  opacity: 0;
+  animation: fadeInUp 0.5s var(--anim-easing) both;
+}
+.section-grid > *:nth-child(1) { animation-delay: 0.15s; }
+.section-grid > *:nth-child(2) { animation-delay: 0.25s; }
+
+.notice-list > .notice-card,
+.activity-list > .list-card,
+.assignment-grid > .assignment-card,
+.material-grid > .material-card,
+.outing-grid > .outing-card {
+  opacity: 0;
+  animation: fadeInUp 0.4s var(--anim-easing) both;
+}
+.notice-list > :nth-child(1),
+.activity-list > :nth-child(1),
+.assignment-grid > :nth-child(1),
+.material-grid > :nth-child(1),
+.outing-grid > :nth-child(1) { animation-delay: 0.05s; }
+.notice-list > :nth-child(2),
+.activity-list > :nth-child(2),
+.assignment-grid > :nth-child(2),
+.material-grid > :nth-child(2),
+.outing-grid > :nth-child(2) { animation-delay: 0.12s; }
+.notice-list > :nth-child(3),
+.activity-list > :nth-child(3),
+.assignment-grid > :nth-child(3),
+.material-grid > :nth-child(3),
+.outing-grid > :nth-child(3) { animation-delay: 0.19s; }
+.notice-list > :nth-child(4),
+.activity-list > :nth-child(4),
+.assignment-grid > :nth-child(4),
+.material-grid > :nth-child(4),
+.outing-grid > :nth-child(4) { animation-delay: 0.26s; }
+
+/* --- Table Card Entrance --- */
+.table-card {
+  animation: fadeInUp 0.5s var(--anim-easing) 0.2s both;
+}
+
+/* --- Button Press Micro-interaction --- */
+.button:active,
+.login-submit:active,
+.login-demo-item:active {
+  transform: scale(0.97) !important;
+  transition: transform 0.08s ease;
+}
+
+/* --- Stat Card Accent Borders --- */
+.app-page .stat-card {
+  border-left: 3px solid transparent;
+  transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.25s var(--anim-easing);
+}
+.app-page .stat-card:nth-child(1) { border-left-color: var(--accent-blue); }
+.app-page .stat-card:nth-child(2) { border-left-color: var(--accent-emerald); }
+.app-page .stat-card:nth-child(3) { border-left-color: var(--accent-amber); }
+.app-page .stat-card:nth-child(4) { border-left-color: var(--accent-violet); }
+
+.app-page .stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Stat Icon Color Accents --- */
+.app-page .stats-grid > .stat-card:nth-child(1) .stat-icon {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--accent-blue);
+}
+.app-page .stats-grid > .stat-card:nth-child(2) .stat-icon {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--accent-emerald);
+}
+.app-page .stats-grid > .stat-card:nth-child(3) .stat-icon {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--accent-amber);
+}
+.app-page .stats-grid > .stat-card:nth-child(4) .stat-icon {
+  background: rgba(139, 92, 246, 0.12);
+  color: var(--accent-violet);
+}
+
+/* --- Upgraded Toast Notifications --- */
+.toast-stack {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: grid;
+  gap: 10px;
+  z-index: 100;
+}
+
+.toast {
+  position: relative;
+  min-width: 300px;
+  max-width: 400px;
+  padding: 16px 18px 20px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
+  animation: slideInRight 0.35s var(--anim-easing) both;
+  cursor: pointer;
+  overflow: hidden;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.toast.dismissing {
+  animation: slideOutRight 0.3s var(--anim-easing) both;
+}
+
+.toast .toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  border-radius: 0 0 14px 14px;
+  animation: progressShrink 3.8s linear forwards;
+}
+
+.toast.success .toast-progress {
+  background: linear-gradient(90deg, var(--accent-emerald), #34d399);
+}
+
+.toast.error .toast-progress {
+  background: linear-gradient(90deg, var(--danger), #f87171);
+}
+
+.toast.success {
+  border-color: rgba(16, 185, 129, 0.25);
+  border-left: 3px solid var(--accent-emerald);
+}
+
+.toast.error {
+  border-color: rgba(220, 38, 38, 0.25);
+  border-left: 3px solid var(--danger);
+}
+
+/* --- Loading Skeleton --- */
+.skeleton {
+  display: grid;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.skeleton-row {
+  display: flex;
+  gap: 16px;
+}
+
+.skeleton-block {
+  border-radius: 12px;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.skeleton-stat {
+  flex: 1;
+  height: 90px;
+}
+
+.skeleton-card {
+  flex: 1;
+  height: 180px;
+}
+
+.skeleton-table {
+  width: 100%;
+  height: 220px;
+}
+
+.skeleton-line {
+  height: 16px;
+  width: 60%;
+}
+
+.skeleton-line-short {
+  height: 14px;
+  width: 35%;
+}
+
+/* --- Improved Empty States --- */
+.empty-state {
+  padding: 48px 28px;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed rgba(148, 163, 184, 0.4);
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgba(241, 245, 249, 0.6), rgba(248, 250, 252, 0.8));
+  animation: fadeIn 0.4s var(--anim-easing) both;
+  font-size: 0.95rem;
+}
+
+.empty-state::before {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  border-radius: 14px;
+  background: rgba(148, 163, 184, 0.12);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z'/%3E%3Cpolyline points='13 2 13 9 20 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 22px;
+}
+
+/* --- Better Focus Rings --- */
+.button:focus-visible,
+.login-submit:focus-visible,
+.login-demo-item:focus-visible,
+.sidebar-link:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
+}
+
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible,
+.login-field input:focus-visible,
+.login-field select:focus-visible {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* --- Custom Sidebar Scrollbar --- */
+.app-page .sidebar {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+}
+
+.app-page .sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.app-page .sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app-page .sidebar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 10px;
+}
+
+.app-page .sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* --- Login Page: Animated Gradient Background --- */
+.login-brand-panel,
+.login-left {
+  background: linear-gradient(
+    135deg,
+    #020617 0%,
+    #020617 20%,
+    #0f172a 45%,
+    #1e3a8a 65%,
+    #1e40af 80%,
+    #2563eb 100%
+  );
+  background-size: 300% 300%;
+  animation: gradientShift 12s ease infinite;
+}
+
+/* --- Login Feature Cards Float --- */
+.login-feature-card:hover,
+.feature-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Login Input Focus Glow --- */
+.login-field input:focus,
+.login-field select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* --- Login Demo Card Autofill Animation --- */
+.login-demo-item:hover,
+.demo-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+  background: rgba(241, 245, 249, 1);
+}
+
+/* --- Login Form Card Entrance --- */
+.login-form-card,
+.login-card {
+  animation: fadeInUp 0.6s var(--anim-easing) 0.1s both;
+}
+
+.login-demo-card {
+  animation: fadeInUp 0.6s var(--anim-easing) 0.25s both;
+}
+
+/* --- Login Brand Content Entrance --- */
+.login-brand-header {
+  animation: fadeInUp 0.6s var(--anim-easing) 0.1s both;
+}
+
+.login-brand-copy {
+  animation: fadeInUp 0.6s var(--anim-easing) 0.2s both;
+}
+
+.login-feature-grid {
+  animation: fadeInUp 0.6s var(--anim-easing) 0.35s both;
+}
+
+.login-tech-pills {
+  animation: fadeInUp 0.6s var(--anim-easing) 0.45s both;
+}
+
+/* --- Sidebar Link Gradient Hover Slide --- */
+.app-page .sidebar-link {
+  position: relative;
+  overflow: hidden;
+}
+
+.app-page .sidebar-link::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.18), transparent);
+  border-radius: 10px;
+  transform: translateX(-100%);
+  transition: transform 0.3s var(--anim-easing);
+  pointer-events: none;
+}
+
+.app-page .sidebar-link:hover::before {
+  transform: translateX(0);
+}
+
+.app-page .sidebar-link.active::before {
+  display: none;
+}
+
+/* --- Sidebar Active Link Glow --- */
+.app-page .sidebar-link.active {
+  box-shadow: 0 0 16px rgba(37, 99, 235, 0.25);
+}
+
+/* --- Table Row Hover Enhancement --- */
+.app-page .data-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.app-page .data-table tbody tr:hover {
+  background: rgba(59, 130, 246, 0.04);
+}
+
+/* --- Topbar Entrance --- */
+.app-page .topbar {
+  animation: fadeIn 0.3s ease both;
+}
+
+/* --- Panel Hover Lift Enhancement --- */
+.app-page .panel:hover,
+.app-page .list-card:hover,
+.app-page .notice-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+  transition: transform 0.25s var(--anim-easing), box-shadow 0.25s var(--anim-easing);
+}
+
+/* --- Form Submission Loading State --- */
+.button.is-loading {
+  pointer-events: none;
+  opacity: 0.7;
+  position: relative;
+}
+
+.button.is-loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --- Glassmorphism Sidebar Brand Pill --- */
+.app-page .sidebar-brand-pill {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Role Icon Button Glow --- */
+.app-page .role-icon-button {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.app-page .role-icon-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.45);
+}
+
+/* --- Prefers Reduced Motion --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   ░░  PREMIUM ELEVATION LAYER (v2)  ░░
+   Cohesive "elevated light" pass for the college ERP.
+   Appended last so it wins the cascade over legacy rules.
+   ============================================================ */
+
+/* ---------- A. Foundation ---------- */
+body.app-page {
+  font-family: var(--font-sans);
+  /* background-attachment:fixed is NOT GPU-accelerated on Android Chrome —
+     it causes constant repaints while scrolling ("checkerboard" jank).
+     Use a static gradient instead; visually identical at mobile sizes. */
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(37, 99, 235, 0.06), transparent 60%),
+    linear-gradient(180deg, #eef2f8 0%, #f1f4f9 100%);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.app-page ::selection {
+  background: rgba(37, 99, 235, 0.18);
+  color: var(--ink);
+}
+
+.app-page .content-shell {
+  background: transparent;
+}
+
+/* ---------- B. Layout: de-card the page body so panels float ---------- */
+.app-page .page-body {
+  margin-top: 24px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  gap: 20px;
+}
+
+/* ---------- C. Topbar: clean frosted sticky bar ---------- */
+.app-page .topbar {
+  padding: 18px 4px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+.app-page .topbar::before { display: none; }
+
+.app-page .content-shell > .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  margin-bottom: 4px;
+  padding: 16px 22px;
+  background: rgba(255, 255, 255, 0.72);
+  /* -webkit- MUST come first — some Android WebViews only support prefixed */
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  backdrop-filter: saturate(180%) blur(16px);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  /* Promote to own compositor layer to avoid sticky-element repaint on Android */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+.app-page .topbar .eyebrow {
+  display: inline-flex;
+  margin: 0 0 2px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.app-page .topbar-title h1 {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.app-page .topbar .button-secondary,
+.app-page .topbar .button-ghost,
+.app-page .menu-toggle {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  color: var(--text);
+  box-shadow: var(--shadow-xs);
+}
+.app-page .topbar .button-secondary:hover,
+.app-page .topbar .button-ghost:hover,
+.app-page .menu-toggle:hover {
+  background: var(--surface-sunken);
+  border-color: var(--border-strong);
+}
+.app-page .role-icon-button {
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--primary-bright), var(--primary-deep));
+  box-shadow: var(--shadow-primary);
+}
+
+/* ---------- D. Sidebar: premium depth ---------- */
+.app-page .sidebar {
+  padding: 22px 16px;
+  background:
+    radial-gradient(420px 220px at 50% -10%, rgba(59, 130, 246, 0.18), transparent 70%),
+    linear-gradient(180deg, #0b1326 0%, #0e1730 55%, #0b1220 100%);
+  border-right: 1px solid rgba(148, 163, 184, 0.12);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.04);
+}
+.app-page .sidebar-brand {
+  padding: 4px 8px 14px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  margin-bottom: 4px;
+}
+.app-page .sidebar-brand-mark {
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--primary-bright), var(--primary-deep));
+  box-shadow: 0 6px 16px -4px rgba(37, 99, 235, 0.6);
+}
+.app-page .sidebar-brand h2 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+.app-page .sidebar-section-title {
+  color: #7c8aa5;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+}
+.app-page .sidebar-link {
+  border-radius: var(--radius-sm);
+  color: #aab6ce;
+  letter-spacing: -0.01em;
+  transition: background-color var(--dur) var(--ease-out),
+    color var(--dur) var(--ease-out), transform var(--dur) var(--ease-out);
+}
+.app-page .sidebar-link:hover {
+  background: rgba(148, 163, 184, 0.1);
+  color: #ffffff;
+  transform: translateX(2px);
+}
+.app-page .sidebar-link.active {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.95), rgba(59, 130, 246, 0.85));
+  color: #ffffff;
+  box-shadow: 0 10px 22px -10px rgba(37, 99, 235, 0.9);
+}
+.app-page .sidebar-link.active::after {
+  content: "";
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  border-radius: 0 3px 3px 0;
+  background: #ffffff;
+}
+.app-page .sidebar .button-secondary {
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- E. KPI stat cards: spacious + confident numbers ---------- */
+.app-page .stat-card {
+  position: relative;
+  padding: 20px;
+  gap: 14px;
+  border: 1px solid var(--hairline);
+  border-left: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out);
+}
+.app-page .stat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--accent-blue);
+  opacity: 0.9;
+}
+.app-page .stats-grid > .stat-card:nth-child(2)::before { background: var(--accent-emerald); }
+.app-page .stats-grid > .stat-card:nth-child(3)::before { background: var(--accent-amber); }
+.app-page .stats-grid > .stat-card:nth-child(4)::before { background: var(--accent-violet); }
+.app-page .stat-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+}
+.app-page .stat-icon svg { width: 20px; height: 20px; }
+.app-page .stat-label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.app-page .stat-card strong {
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.app-page .stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border);
+}
+
+/* ---------- F. Panels & cards: layered depth, refined headers ---------- */
+.app-page .panel,
+.app-page .table-card,
+.app-page .list-card,
+.app-page .notice-card,
+.app-page .timeline-item,
+.app-page .roster-card,
+.app-page .assignment-card,
+.app-page .material-card,
+.app-page .outing-card,
+.app-page .schedule-day-card,
+.app-page .result-panel,
+.app-page .inline-message {
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+.app-page .panel,
+.app-page .table-card,
+.app-page .list-card {
+  padding: 22px;
+}
+.app-page .panel:hover,
+.app-page .table-card:hover,
+.app-page .list-card:hover,
+.app-page .notice-card:hover,
+.app-page .timeline-item:hover,
+.app-page .roster-card:hover,
+.app-page .assignment-card:hover,
+.app-page .material-card:hover,
+.app-page .outing-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border);
+  transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out);
+}
+.app-page .panel-heading h2,
+.app-page .table-head h2 {
+  font-family: var(--font-display);
+  font-size: 1.18rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.app-page .panel .eyebrow,
+.app-page .table-card .eyebrow {
+  display: inline-flex;
+  margin-bottom: 4px;
+  color: var(--primary);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Flatten cards nested inside a panel (avoid card-in-card) */
+.app-page .panel .list-card,
+.app-page .panel .notice-card,
+.app-page .panel .timeline-item,
+.app-page .panel .roster-card {
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+.app-page .panel .list-card:hover,
+.app-page .panel .notice-card:hover,
+.app-page .panel .timeline-item:hover,
+.app-page .panel .roster-card:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--border-strong);
+}
+
+/* ---------- G. Tables: airy, scannable ---------- */
+.app-page .table-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.app-page .data-table th {
+  background: var(--surface-sunken);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+.app-page .data-table td {
+  border-bottom: 1px solid var(--hairline);
+  color: var(--text-soft);
+}
+.app-page .data-table tbody tr {
+  transition: background-color var(--dur-fast) ease;
+}
+.app-page .data-table tbody tr:hover {
+  background: var(--primary-50);
+}
+
+/* ---------- H. Buttons: refined gradient + spring press ---------- */
+.app-page .button {
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  transition: transform var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur) var(--ease-out), background-color var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out);
+}
+.app-page .button-primary {
+  background: linear-gradient(180deg, var(--primary-bright), var(--primary));
+  border-color: transparent;
+  color: #fff;
+  box-shadow: var(--shadow-primary), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+.app-page .button-primary:hover {
+  background: linear-gradient(180deg, var(--primary), var(--primary-deep));
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px -8px var(--primary-ring), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+.app-page .button:active { transform: translateY(0) scale(0.97); }
+.app-page .button-secondary,
+.app-page .button-ghost {
+  box-shadow: var(--shadow-xs);
+}
+
+/* ---------- I. Inputs: refined focus ---------- */
+.app-page .field input,
+.app-page .field select,
+.app-page .field textarea,
+.app-page .compact-select {
+  border-radius: var(--radius-sm);
+  border-color: var(--border-strong);
+  transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out),
+    background-color var(--dur) var(--ease-out);
+}
+.app-page .field input:focus,
+.app-page .field select:focus,
+.app-page .field textarea:focus,
+.app-page .compact-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-50);
+}
+
+/* ---------- J. Badges & pills: softer, confident ---------- */
+.app-page .status-badge,
+.app-page .role-pill,
+.app-page .tag {
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
+}
+.app-page .status-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-right: 1px;
+  opacity: 0.85;
+}
+
+/* ---------- K. Login: refine to match the system ---------- */
+.auth-page .login-shell,
+.auth-page .login-wrapper {
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+.auth-page .login-form-heading h2 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+.auth-page .login-field input,
+.auth-page .login-field select {
+  border-radius: var(--radius-sm);
+  border-color: var(--border-strong);
+}
+.auth-page .login-submit,
+.auth-page .btn-primary {
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, var(--primary-bright), var(--primary)) !important;
+  box-shadow: var(--shadow-primary), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+  transition: transform var(--dur-fast) var(--ease-spring), box-shadow var(--dur) var(--ease-out);
+}
+.auth-page .login-submit:hover,
+.auth-page .btn-primary:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(180deg, var(--primary), var(--primary-deep)) !important;
+  box-shadow: 0 12px 26px -8px var(--primary-ring), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+.auth-page .login-feature-card {
+  border-radius: var(--radius-md);
+}
+
+/* ---------- L. Accessibility: visible focus, motion safety ---------- */
+.app-page a:focus-visible,
+.app-page button:focus-visible,
+.app-page .sidebar-link:focus-visible,
+.auth-page a:focus-visible,
+.auth-page button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .app-page .sidebar-link:hover,
+  .app-page .stat-card:hover,
+  .app-page .panel:hover,
+  .app-page .button:hover,
+  .app-page .button-primary:hover {
+    transform: none !important;
+  }
+}
+
+/* ============================================================
+   ░░  MOTION LIBRARY REVEAL (motion.dev)  ░░
+   When app.js has loaded Motion (html.motion-ready), the JS owns the
+   entrance: legacy CSS keyframe entrances are neutralized and reveal
+   targets start hidden until the Motion observer springs them in.
+   Without `motion-ready` (CDN of failsafe path, or reduced motion),
+   content is fully visible — graceful, never blank.
+   ============================================================ */
+
+/* Neutralize the legacy CSS keyframe entrances so they don't fight Motion. */
+html.motion-ready .page-body,
+html.motion-ready .app-page .page-body,
+html.motion-ready .page-body > .stats-grid > .stat-card,
+html.motion-ready .page-body > .section-grid > .panel,
+html.motion-ready .page-body > .section-grid > .table-card,
+html.motion-ready .page-body > .panel,
+html.motion-ready .page-body > .table-card,
+html.motion-ready .page-body > .notice-list > .notice-card,
+html.motion-ready .page-body > .activity-list > .list-card,
+html.motion-ready .page-body > .list-grid > .list-card,
+html.motion-ready .page-body > .assignment-grid > .assignment-card,
+html.motion-ready .page-body > .material-grid > .material-card,
+html.motion-ready .page-body > .outing-grid > .outing-card,
+html.motion-ready .page-body > .roster-grid > .roster-item,
+html.motion-ready .page-body > .schedule-grid > .schedule-day-card {
+  animation: none !important;
+}
+
+/* Hidden until Motion reveals it (adds .is-revealed). Opacity only — Motion
+   drives the spring transform inline, so hover transforms still work after. */
+html.motion-ready .page-body > .stats-grid > .stat-card:not(.is-revealed),
+html.motion-ready .page-body > .section-grid > .panel:not(.is-revealed),
+html.motion-ready .page-body > .section-grid > .table-card:not(.is-revealed),
+html.motion-ready .page-body > .panel:not(.is-revealed),
+html.motion-ready .page-body > .table-card:not(.is-revealed),
+html.motion-ready .page-body > .notice-list > .notice-card:not(.is-revealed),
+html.motion-ready .page-body > .activity-list > .list-card:not(.is-revealed),
+html.motion-ready .page-body > .list-grid > .list-card:not(.is-revealed),
+html.motion-ready .page-body > .assignment-grid > .assignment-card:not(.is-revealed),
+html.motion-ready .page-body > .material-grid > .material-card:not(.is-revealed),
+html.motion-ready .page-body > .outing-grid > .outing-card:not(.is-revealed),
+html.motion-ready .page-body > .roster-grid > .roster-item:not(.is-revealed),
+html.motion-ready .page-body > .schedule-grid > .schedule-day-card:not(.is-revealed) {
+  opacity: 0;
+}
+
+/* Safety net: never keep content hidden for reduced-motion users. */
+@media (prefers-reduced-motion: reduce) {
+  html.motion-ready .page-body > * { opacity: 1 !important; }
+}
+
+/* ============================================================
+   ░░  3D LOGIN  ░░  Pointer-driven perspective tilt + depth.
+   Enabled by JS (body.login-3d) ONLY on fine-pointer, motion-OK,
+   wide screens. Touch / Android / reduced-motion keep the flat
+   premium login, so the mobile experience is unaffected.
+   ============================================================ */
+.auth-page[data-page="login"] {
+  perspective: 1600px;
+  perspective-origin: 50% 32%;
+}
+
+body.login-3d { overflow-x: hidden; }
+
+body.login-3d .login-shell,
+body.login-3d .login-wrapper {
+  will-change: transform;
+  box-shadow: var(--shadow-lg);
+  transition: box-shadow 0.35s var(--ease-out);
+}
+body.login-3d.is-tilting .login-shell,
+body.login-3d.is-tilting .login-wrapper {
+  box-shadow: 0 44px 90px -32px rgba(2, 6, 23, 0.55), 0 24px 48px -24px rgba(30, 58, 138, 0.4);
+}
+
+/* Brand-panel layers get a JS-driven parallax translate, so swap the
+   transform-based entrance for an opacity-only one to avoid fighting it. */
+@keyframes loginFade3d { from { opacity: 0; } to { opacity: 1; } }
+body.login-3d .login-brand-header,
+body.login-3d .login-brand-copy,
+body.login-3d .login-feature-grid,
+body.login-3d .login-tech-pills {
+  animation: loginFade3d 0.6s var(--ease-out) both;
+  will-change: transform;
+}
+body.login-3d .login-brand-copy { animation-delay: 0.12s; }
+body.login-3d .login-feature-grid { animation-delay: 0.22s; }
+body.login-3d .login-tech-pills { animation-delay: 0.32s; }
+
+/* Light sheen that follows the pointer across the dark brand panel. */
+body.login-3d .login-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-out);
+  background: radial-gradient(
+    460px circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(147, 197, 253, 0.28),
+    rgba(255, 255, 255, 0.05) 32%,
+    transparent 62%
+  );
+  mix-blend-mode: screen;
+}
+body.login-3d.is-tilting .login-glare { opacity: 1; }
+
+/* ============================================================
+   ░░  MOBILE / ANDROID REFINEMENTS  ░░
+   Compact, touch-friendly chrome on small screens.
+   ============================================================ */
+
+/* --- Global Android / Touch Smoothness --- */
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+body {
+  -webkit-overflow-scrolling: touch;
+  touch-action: manipulation;
+}
+
+/* Use dvh where supported for proper Android Chrome address-bar handling */
+@supports (min-height: 100dvh) {
+  .auth-page, .landing-page { min-height: 100dvh; }
+  .app-page .sidebar { height: 100dvh; }
+}
+
+/* --- GPU-composited animations only (no layout thrash on mobile) --- */
+.stat-card,
+.panel,
+.table-card,
+.list-card,
+.notice-card,
+.assignment-card,
+.material-card,
+.outing-card,
+.login-demo-item,
+.button,
+.sidebar-link {
+  will-change: transform, opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* --- Backdrop-filter fallback for older Android WebView --- */
+@supports not (backdrop-filter: blur(1px)) {
+  .app-page .content-shell > .topbar {
+    background: rgba(255, 255, 255, 0.96) !important;
+  }
+  .app-page .sidebar-brand-pill {
+    background: rgba(255, 255, 255, 0.12) !important;
+  }
+  .toast {
+    background: rgba(255, 255, 255, 0.99) !important;
+  }
+}
+
+/* ---- Login Page: mobile stacking ---- */
+@media (max-width: 768px) {
+  .login-shell,
+  .login-wrapper,
+  .login-container {
+    grid-template-columns: 1fr !important;
+    min-height: auto;
+    margin: 16px auto;
+    border-radius: 16px;
+  }
+
+  .login-brand-panel,
+  .login-left {
+    padding: 32px 24px;
+    gap: 16px;
+    border-radius: 16px 16px 0 0;
+    min-height: auto;
+  }
+
+  .login-brand-copy h1 {
+    font-size: 1.75rem;
+    line-height: 1.15;
+  }
+
+  .login-form-panel {
+    padding: 24px 20px;
+    gap: 16px;
+  }
+
+  .login-form-card,
+  .login-card {
+    padding: 20px 16px;
+    border: none;
+    box-shadow: none;
+  }
+
+  .login-form-heading h2 {
+    font-size: 1.5rem;
+  }
+
+  .login-demo-card {
+    padding: 18px 16px;
+    border: none;
+    box-shadow: none;
+  }
+
+  .login-demo-grid {
+    gap: 10px;
+  }
+
+  .login-secondary-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .login-secondary-button,
+  .login-secondary-link {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ---- Dashboard app: mobile topbar fix ---- */
+@media (max-width: 760px) {
+  /* Topbar: keep title + actions on one tidy, non-overlapping row. */
+  .app-page .content-shell > .topbar {
+    padding: 12px 14px;
+    gap: 10px;
+    flex-wrap: nowrap;
+    border-radius: 0 0 12px 12px;
+  }
+  .app-page .topbar .eyebrow { display: none; }
+  .app-page .topbar-title {
+    gap: 10px;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .app-page .topbar-title h1 {
+    font-size: 1.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .app-page .topbar-actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  /* Override the global mobile `.button{width:100%}` for top-bar chrome,
+     which otherwise makes Menu/Logout full-width and overlap the title. */
+  .app-page .menu-toggle {
+    flex-shrink: 0;
+    width: auto;
+    min-height: 44px;
+    padding: 0 14px;
+  }
+  .app-page .topbar-actions .button,
+  .app-page .topbar-actions .button-small {
+    width: auto;
+    min-height: 44px;
+    padding: 0 14px;
+  }
+
+  /* Content padding */
+  .app-page .content-shell {
+    padding: 0 12px 12px;
+  }
+  .app-page .page-body {
+    margin-top: 12px;
+    gap: 14px;
+  }
+
+  /* Cards: comfortable padding */
+  .app-page .panel,
+  .app-page .table-card,
+  .app-page .list-card,
+  .app-page .stat-card,
+  .app-page .notice-card,
+  .app-page .assignment-card,
+  .app-page .material-card,
+  .app-page .outing-card {
+    padding: 14px;
+  }
+
+  /* Stat grid: 2-column on phones */
+  .app-page .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .app-page .stat-card strong {
+    font-size: 1.5rem;
+  }
+
+  /* Tables: scrollable */
+  .app-page .table-wrap {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Touch-friendly sidebar links */
+  .app-page .sidebar-link {
+    padding: 14px;
+    min-height: 48px;
+  }
+
+  /* Topbar actions row fix */
+  .app-page .topbar-actions,
+  .app-page .split-row,
+  .app-page .roster-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .app-page .roster-item {
+    grid-template-columns: 1fr;
+  }
+
+  /* Form grid to single column */
+  .app-page .form-grid,
+  .app-page .form-grid.two-column,
+  .app-page .section-grid.two-column {
+    grid-template-columns: 1fr;
+  }
+
+  /* Sidebar overlay */
+  .app-page .sidebar {
+    border-radius: 0 14px 14px 0;
+  }
+}
+
+/* ---- Extra-small phones (< 430px) ---- */
+@media (max-width: 430px) {
+  .app-page .topbar-title h1 { font-size: 1.05rem; }
+  .app-page .topbar-actions .button-small { padding: 0 10px; font-size: 0.85rem; }
+
+  /* Keep the 2-up KPI grid from the 760px breakpoint (a single forced
+     column here made every phone — 360-412px is the common Android
+     range — show 4 full-width cards stacked before any real content). */
+  .app-page .stats-grid {
+    gap: 8px;
+  }
+
+  .app-page .stat-card {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+  .app-page .stat-card strong {
+    font-size: 1.2rem;
+  }
+  .app-page .stat-card .stat-icon {
+    width: 28px;
+    height: 28px;
+  }
+  .app-page .stat-card .stat-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+  .app-page .stat-label {
+    font-size: 0.6rem;
+  }
+
+  /* Full-width buttons on small phones */
+  .app-page .page-body .button,
+  .app-page .page-body .button-small,
+  .app-page .inline-actions .button {
+    width: 100%;
+  }
+
+  .login-brand-copy h1 {
+    font-size: 1.5rem;
+  }
+}
+
+/* ---- Minimum 48px touch targets (Android accessibility) ---- */
+@media (pointer: coarse) {
+  .button,
+  .login-submit,
+  .login-demo-item,
+  .menu-toggle,
+  .sidebar-link,
+  .login-field input,
+  .login-field select,
+  .field input,
+  .field select,
+  .field textarea,
+  .compact-select,
+  .icon-action {
+    min-height: 48px;
+  }
+
+  .icon-action {
+    min-width: 48px;
+  }
+
+  /* Disable hover transforms on touch (prevents sticky :hover on Android) */
+  .stat-card:hover,
+  .panel:hover,
+  .list-card:hover,
+  .notice-card:hover,
+  .assignment-card:hover,
+  .material-card:hover,
+  .outing-card:hover,
+  .login-demo-item:hover,
+  .login-feature-card:hover,
+  .button:hover {
+    transform: none !important;
+  }
+
+  /* Faster transitions for touch responsiveness */
+  .button,
+  .sidebar-link,
+  .login-demo-item {
+    transition-duration: 0.1s !important;
+  }
+}
+
+/* ---- Disable heavy animations on low-end devices ---- */
+@media (prefers-reduced-motion: reduce), (update: slow) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================
+   ░░  UI/UX PRO MAX — ANDROID PERFORMANCE OPTIMISATION  ░░
+   Skill recommendation: Flat Design + Inter + 150-200ms ease
+   transitions on GPU-only properties for 60fps on Android.
+   ============================================================ */
+
+/* --- CSS Containment: isolate paint for cards so scrolling is cheap --- */
+.stat-card,
+.panel,
+.table-card,
+.list-card,
+.notice-card,
+.assignment-card,
+.material-card,
+.outing-card,
+.roster-card,
+.schedule-day-card,
+.login-form-card,
+.login-demo-card {
+  contain: content; /* layout + style + paint isolation */
+}
+
+/* --- Sidebar: promote to own GPU layer permanently when on mobile --- */
+@media (max-width: 980px) {
+  .app-page .sidebar {
+    -webkit-transform: translate3d(-115%, 0, 0);
+    transform: translate3d(-115%, 0, 0);
+    isolation: isolate; /* new stacking context = no repaint bleed */
+  }
+  .app-page .sidebar.open {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* --- Topbar sticky: GPU layer to fix Android sticky repaint --- */
+.app-page .content-shell > .topbar {
+  isolation: isolate;
+}
+
+/* --- Buttons: UI/UX Pro Max spec — 150ms ease, color+opacity only --- */
+.button,
+.login-submit,
+.btn-primary {
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    opacity 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s var(--ease-spring);
+  cursor: pointer;
+}
+
+/* --- Cards: 200ms ease per skill spec; transform only for lift --- */
+.stat-card,
+.panel,
+.list-card,
+.notice-card,
+.assignment-card,
+.material-card,
+.outing-card {
+  transition:
+    transform 0.2s var(--ease-out),
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* --- Sidebar links: 150ms color only on touch (no transform) --- */
+@media (pointer: coarse) {
+  .app-page .sidebar-link {
+    transition: background-color 0.15s ease, color 0.15s ease;
+    /* No translateX on touch — causes jitter on Android */
+    transform: none !important;
+  }
+  .app-page .sidebar-link:hover::before {
+    /* Disable gradient slide animation on Android */
+    display: none;
+  }
+  /* Remove sticky :hover transforms on all interactive cards */
+  .stat-card:hover,
+  .panel:hover,
+  .list-card:hover,
+  .notice-card:hover,
+  .assignment-card:hover,
+  .material-card:hover,
+  .outing-card:hover,
+  .button:hover,
+  .login-demo-item:hover {
+    transform: none !important;
+  }
+}
+
+/* --- Font alignment: ensure Inter renders flush on all Android sizes --- */
+@media (max-width: 768px) {
+  /* Increase contrast for login heading on small screens */
+  .login-brand-copy h1 {
+    font-size: clamp(1.6rem, 7vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    /* Ensure text doesn't bleed off-screen */
+    word-break: break-word;
+    hyphens: auto;
+  }
+
+  /* Sidebar brand: tighter layout for small screens */
+  .app-page .sidebar-brand h2 {
+    font-size: 0.9rem;
+    line-height: 1.3;
+    word-break: break-word;
+  }
+
+  /* Stat card numbers: smaller but still legible */
+  .app-page .stat-card strong {
+    font-size: clamp(1.2rem, 5vw, 1.8rem);
+    line-height: 1.1;
+  }
+
+  /* Table: compact text. Headers stay on one line (set above); only body
+     cells wrap, and only at word boundaries — see base rule above. */
+  .app-page .data-table th,
+  .app-page .data-table td {
+    font-size: 0.8rem;
+    padding: 10px 12px;
+  }
+
+  /* Form labels: readable on small screens */
+  .field span,
+  .login-field-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  /* Inputs: 16px minimum prevents Android zoom */
+  .field input,
+  .field select,
+  .field textarea,
+  .login-field input,
+  .login-field select {
+    font-size: 1rem; /* 16px — no auto-zoom */
+    line-height: 1.5;
+  }
+
+  /* Panel headings: scale down gracefully */
+  .app-page .panel-heading h2,
+  .app-page .table-head h2 {
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+
+  /* Page title in topbar */
+  .app-page .topbar-title h1 {
+    font-size: clamp(1rem, 4.5vw, 1.4rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  /* Notice & assignment cards */
+  .app-page .notice-card h3,
+  .app-page .assignment-card h3,
+  .app-page .material-card h3 {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+}
+
+/* ---- Ultra-small screens (< 360px, low-end Android) ---- */
+@media (max-width: 359px) {
+  html { font-size: 14px; } /* Scale down base gracefully */
+  .app-page .topbar-title h1 { font-size: 0.95rem; }
+  .app-page .stat-card strong { font-size: 1.1rem; }
+  .login-brand-copy h1 { font-size: 1.4rem; }
 }
