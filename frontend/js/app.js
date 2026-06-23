@@ -1,3 +1,47 @@
+/* ---- Motion bootstrap (progressive enhancement; app pages only) ----
+ * Adds `motion-ready` so the stylesheet hands entrance control to the Motion
+ * library, then dynamically imports the reveal module. A failsafe reveals all
+ * content if Motion never initializes (e.g. the vendored file fails to load),
+ * and reduced-motion users skip it entirely. */
+(function bootstrapMotion() {
+  try {
+    var isAppPage = document.body && document.body.classList.contains("app-page");
+    var reduced =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Scroll-reveal is a DESKTOP-only enhancement. On touch / small screens it can
+    // leave large areas blank while waiting to reveal and feels sluggish, so mobile
+    // shows content immediately (with the lightweight CSS entrance instead).
+    var finePointer = window.matchMedia && window.matchMedia("(pointer: fine)").matches;
+    var wideEnough = window.innerWidth >= 1024;
+    if (!isAppPage || reduced || !finePointer || !wideEnough) return;
+    document.documentElement.classList.add("motion-ready");
+    window.__cmsMotionFailsafe = window.setTimeout(function () {
+      document.documentElement.classList.remove("motion-ready");
+    }, 2500);
+    import("/js/motion.js").catch(function () {
+      window.clearTimeout(window.__cmsMotionFailsafe);
+      document.documentElement.classList.remove("motion-ready");
+    });
+  } catch (err) {
+    /* no-op: content stays fully visible without motion */
+  }
+})();
+
+/* ---- Android / mobile browser chrome color ---- */
+(function themeColor() {
+  try {
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.name = "theme-color";
+      document.head.appendChild(meta);
+    }
+    meta.content = "#eef2f8";
+  } catch (err) {
+    /* no-op */
+  }
+})();
+
 const APP_BASE =
   window.location.origin && window.location.origin !== "null" ? window.location.origin : "http://localhost:3000";
 const API_BASE = `${APP_BASE}/api`;
@@ -278,10 +322,24 @@ function panel({ eyebrow = "Overview", title, body, actions = "" }) {
   `;
 }
 
-function renderLoading(message) {
+function renderLoading(_message) {
   const root = document.getElementById("pageContent");
   if (root) {
-    root.innerHTML = emptyState(message);
+    root.innerHTML = `
+      <div class="skeleton">
+        <div class="skeleton-row">
+          <div class="skeleton-block skeleton-stat"></div>
+          <div class="skeleton-block skeleton-stat"></div>
+          <div class="skeleton-block skeleton-stat"></div>
+          <div class="skeleton-block skeleton-stat"></div>
+        </div>
+        <div class="skeleton-row">
+          <div class="skeleton-block skeleton-card"></div>
+          <div class="skeleton-block skeleton-card"></div>
+        </div>
+        <div class="skeleton-block skeleton-table"></div>
+      </div>
+    `;
   }
 }
 
@@ -349,6 +407,7 @@ async function initializeProtectedPage(page) {
   }
 
   renderShell(page);
+  window.scrollTo({ top: 0, behavior: "smooth" });
   await renderPage(page);
 }
 
@@ -368,7 +427,7 @@ function renderShell(page) {
             <span class="sidebar-brand-pill-text">Secure Campus Workspace</span>
           </span>
         </div>
-        <h2>College Management</h2>
+        <h2>DIET Engineering College</h2>
       </div>
       <div>
         <p class="sidebar-section-title">Navigation</p>
@@ -408,14 +467,25 @@ function renderShell(page) {
   const closeSidebar = () => {
     document.getElementById("sidebar")?.classList.remove("open");
     overlay?.classList.remove("open");
+    document.body.classList.remove("nav-open");
+  };
+
+  const openSidebar = () => {
+    document.getElementById("sidebar")?.classList.add("open");
+    overlay?.classList.add("open");
+    document.body.classList.add("nav-open");
   };
 
   menuToggle?.addEventListener("click", () => {
-    document.getElementById("sidebar")?.classList.toggle("open");
-    overlay?.classList.toggle("open");
+    const isOpen = document.getElementById("sidebar")?.classList.contains("open");
+    if (isOpen) closeSidebar();
+    else openSidebar();
   });
 
   overlay?.addEventListener("click", closeSidebar);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeSidebar();
+  });
   document.getElementById("sidebarLogout")?.addEventListener("click", logout);
   document.getElementById("topbarLogout")?.addEventListener("click", logout);
 }
@@ -435,15 +505,34 @@ function showToast(message, type = "success") {
 
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
-  toast.textContent = message;
+
+  const iconSvg = type === "success"
+    ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+    : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+
+  toast.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="flex-shrink:0;display:flex;">${iconSvg}</span>
+      <span>${escapeHtml(message)}</span>
+    </div>
+    <div class="toast-progress"></div>
+  `;
+
+  toast.addEventListener("click", () => dismissToast(toast, stack));
   stack.appendChild(toast);
 
-  window.setTimeout(() => {
+  window.setTimeout(() => dismissToast(toast, stack), 3800);
+}
+
+function dismissToast(toast, stack) {
+  if (toast.classList.contains("dismissing")) return;
+  toast.classList.add("dismissing");
+  toast.addEventListener("animationend", () => {
     toast.remove();
-    if (!stack.children.length) {
+    if (stack && !stack.children.length) {
       stack.remove();
     }
-  }, 3800);
+  });
 }
 
 function setInlineMessage(element, message, type) {
@@ -496,6 +585,89 @@ function bindLoginForm() {
     } catch (error) {
       setInlineMessage(message, error.message, "error");
     }
+  });
+
+  initLoginTilt();
+}
+
+/* Interactive 3D tilt for the login card. Desktop / fine-pointer / motion-OK only;
+ * touch (Android) and reduced-motion get the flat premium login untouched. */
+function initLoginTilt() {
+  const scene = document.querySelector(".login-shell, .login-wrapper");
+  if (!scene) return;
+
+  const mq = (query) => (window.matchMedia ? window.matchMedia(query).matches : false);
+  const enabled = () =>
+    !mq("(prefers-reduced-motion: reduce)") && !mq("(pointer: coarse)") && window.innerWidth >= 980;
+
+  if (!enabled()) {
+    // A desktop window may be resized wider later — arm it then.
+    const onResize = () => {
+      if (enabled()) {
+        window.removeEventListener("resize", onResize);
+        initLoginTilt();
+      }
+    };
+    window.addEventListener("resize", onResize);
+    return;
+  }
+
+  document.body.classList.add("login-3d");
+
+  const brand = scene.querySelector(".login-brand-panel");
+  if (brand && !brand.querySelector(".login-glare")) {
+    const glare = document.createElement("div");
+    glare.className = "login-glare";
+    brand.appendChild(glare);
+  }
+
+  const layers = [
+    [scene.querySelector(".login-brand-header"), 22],
+    [scene.querySelector(".login-brand-copy"), 15],
+    [scene.querySelector(".login-feature-grid"), 9],
+    [scene.querySelector(".login-tech-pills"), 6]
+  ].filter((pair) => pair[0]);
+
+  const MAX = 6.5;
+  let tRx = 0, tRy = 0, cRx = 0, cRy = 0; // target / current rotation
+  let tNx = 0, tNy = 0, cNx = 0, cNy = 0; // target / current parallax (-1..1)
+  let raf = 0;
+
+  const frame = () => {
+    cRx += (tRx - cRx) * 0.12;
+    cRy += (tRy - cRy) * 0.12;
+    cNx += (tNx - cNx) * 0.12;
+    cNy += (tNy - cNy) * 0.12;
+    scene.style.transform = `rotateX(${cRx.toFixed(2)}deg) rotateY(${cRy.toFixed(2)}deg)`;
+    for (const [el, depth] of layers) {
+      el.style.transform = `translate(${(cNx * depth).toFixed(1)}px, ${(cNy * depth).toFixed(1)}px)`;
+    }
+    const settled =
+      Math.abs(tRx - cRx) < 0.02 && Math.abs(tRy - cRy) < 0.02 &&
+      Math.abs(tNx - cNx) < 0.002 && Math.abs(tNy - cNy) < 0.002;
+    raf = settled ? 0 : requestAnimationFrame(frame);
+  };
+  const kick = () => { if (!raf) raf = requestAnimationFrame(frame); };
+
+  scene.addEventListener("pointermove", (event) => {
+    if (event.pointerType === "touch") return;
+    const rect = scene.getBoundingClientRect();
+    const px = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+    const py = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
+    tNx = (px - 0.5) * 2;
+    tNy = (py - 0.5) * 2;
+    tRy = tNx * MAX;
+    tRx = -tNy * MAX;
+    scene.style.setProperty("--glare-x", (px * 100).toFixed(1) + "%");
+    scene.style.setProperty("--glare-y", (py * 100).toFixed(1) + "%");
+    document.body.classList.add("is-tilting");
+    kick();
+  });
+
+  scene.addEventListener("pointerleave", () => {
+    tRx = tRy = tNx = tNy = 0;
+    document.body.classList.remove("is-tilting");
+    kick();
   });
 }
 

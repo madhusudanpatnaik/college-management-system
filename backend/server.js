@@ -3,6 +3,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const path = require("path");
 const fs = require("fs");
+const rateLimit = require("express-rate-limit");
 
 const { initializeDatabase } = require("./config/db");
 
@@ -38,6 +39,13 @@ app.use(
 app.use(cors({ origin: "*" }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
+
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 500,
+  message: { message: "Too many requests from this IP, please try again later." }
+});
+app.use("/api", generalLimiter);
 
 app.use("/uploads", express.static(uploadsDir));
 app.use(express.static(frontendDir));
@@ -78,12 +86,18 @@ app.use((err, _req, res, _next) => {
 async function startServer() {
   await initializeDatabase();
 
-  app.listen(PORT, () => {
-    console.log(`College Management System API running on http://localhost:${PORT}`);
+  if (require.main === module) {
+    app.listen(PORT, () => {
+      console.log(`College Management System API running on http://localhost:${PORT}`);
+    });
+  }
+}
+
+if (require.main === module) {
+  startServer().catch((error) => {
+    console.error("Failed to start the College Management System server.", error);
+    process.exit(1);
   });
 }
 
-startServer().catch((error) => {
-  console.error("Failed to start the College Management System server.", error);
-  process.exit(1);
-});
+module.exports = { app, initializeDatabase };

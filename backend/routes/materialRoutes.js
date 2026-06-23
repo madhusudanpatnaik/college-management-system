@@ -18,7 +18,17 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const blocked = /\.(exe|bat|cmd|sh|php|jar|msi)$/i;
+    if (blocked.test(file.originalname)) {
+      return cb(new Error("This file type is not allowed."), false);
+    }
+    cb(null, true);
+  }
+});
 
 function removeUploadedFile(file) {
   if (file && file.path && fs.existsSync(file.path)) {

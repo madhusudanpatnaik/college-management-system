@@ -2,8 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login | CMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="College Management System — Secure role-based login for admins, faculty, and students." />
+    <title>Login | DIET Engineering College</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="css/styles.css" />
     <script defer src="js/app.js"></script>
   </head>
@@ -11,38 +15,14 @@
     <main class="login-shell login-wrapper login-container">
       <section class="login-brand-panel login-left">
         <div class="login-brand-overlay overlay light-separator" aria-hidden="true"></div>
+        <div class="login-brand-copy">
+          <h1>DIET Engineering College</h1>
+        </div>
         <div class="login-brand-header">
           <span class="login-brand-badge secure-pill">
             <span class="cms-mini">CMS</span>
             <span class="secure-pill-text">SECURE CAMPUS WORKSPACE</span>
           </span>
-        </div>
-        <div class="login-brand-copy">
-          <h1>College Management System<br />Role-based Access</h1>
-          <p>
-            Secure academic operations for admins, faculty, and students in one centralized platform
-            with role-based access, real-time tracking, and seamless academic workflows.
-          </p>
-        </div>
-        <div class="login-feature-grid feature-cards">
-          <article class="login-feature-card feature-card">
-            <h2>Secure RBAC</h2>
-            <p>Protected access for every campus role.</p>
-          </article>
-          <article class="login-feature-card feature-card">
-            <h2>Academic Workflows</h2>
-            <p>Attendance, exams, materials, and submissions.</p>
-          </article>
-          <article class="login-feature-card feature-card">
-            <h2>Operational Visibility</h2>
-            <p>Clean dashboards with modern SaaS UX.</p>
-          </article>
-        </div>
-        <div class="login-tech-pills">
-          <span class="login-tech-pill">JWT Auth</span>
-          <span class="login-tech-pill">RBAC</span>
-          <span class="login-tech-pill">SQLite</span>
-          <span class="login-tech-pill">Responsive UI</span>
         </div>
       </section>
       <section class="login-form-panel login-right">
@@ -56,7 +36,7 @@
             <label class="login-field">
               <span class="login-field-label">Role</span>
               <span class="select-wrapper">
-                <select name="role" id="loginRole" required>
+                <select name="role" id="loginRole" required autocomplete="off">
                   <option value="">Select your role</option>
                   <option value="admin">Admin</option>
                   <option value="faculty">Faculty</option>
@@ -66,11 +46,11 @@
             </label>
             <label class="login-field">
               <span class="login-field-label">Email address</span>
-              <input type="email" name="email" id="loginEmail" placeholder="name@college.edu" required />
+              <input type="email" name="email" id="loginEmail" placeholder="name@college.edu" required autocomplete="email" inputmode="email" />
             </label>
             <label class="login-field">
               <span class="login-field-label">Password</span>
-              <input type="password" name="password" id="loginPassword" placeholder="Enter your password" required />
+              <input type="password" name="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password" />
             </label>
             <button class="button button-primary btn-primary login-submit" type="submit">Sign In</button>
           </form>

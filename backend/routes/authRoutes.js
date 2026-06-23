@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
+const rateLimit = require("express-rate-limit");
 
 const authMiddleware = require("../middleware/authMiddleware");
 const { db, getUserAccountByEmail, getUserProfileById } = require("../config/db");
@@ -10,6 +11,12 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "REDACTED_DEV_SECRET";
 const JWT_EXPIRES_IN = "8h";
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: { message: "Too many login attempts, please try again after 15 minutes." }
+});
 
 function getRedirectPage(role) {
   return {
@@ -31,7 +38,7 @@ function buildAuthPayload(user) {
   };
 }
 
-router.post("/login", (req, res) => {
+router.post("/login", authLimiter, (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
