@@ -3,6 +3,7 @@ const express = require("express");
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 const { db, getFacultyProfileByUserId, getStudentProfileByUserId } = require("../config/db");
+const { facultyOwnsCourse } = require("../utils/authorization");
 
 const router = express.Router();
 
@@ -17,15 +18,7 @@ function calculateGrade(marksObtained, maxMarks) {
   return "F";
 }
 
-function facultyOwnsCourse(userId, courseId) {
-  const faculty = getFacultyProfileByUserId(userId);
-  if (!faculty) {
-    return false;
-  }
 
-  const course = db.prepare("SELECT id FROM courses WHERE id = ? AND faculty_id = ?").get(courseId, faculty.id);
-  return Boolean(course);
-}
 
 router.use(authMiddleware);
 

@@ -5,9 +5,9 @@ const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 const { db, getStudentProfileByUserId } = require("../config/db");
 const { getAssignedFacultyId, getStudentTimetable } = require("../services/studentFacultyService");
+const { emailPattern } = require("../utils/validation");
 
 const router = express.Router();
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function resolveFeeStatus(totalAmount, paidAmount) {
   if (paidAmount <= 0) return "pending";

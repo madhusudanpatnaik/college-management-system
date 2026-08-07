@@ -6,17 +6,30 @@ const rateLimit = require("express-rate-limit");
 
 const authMiddleware = require("../middleware/authMiddleware");
 const { db, getUserAccountByEmail, getUserProfileById } = require("../config/db");
+const { JWT_SECRET, JWT_EXPIRES_IN } = require("../config/auth");
+const { emailPattern } = require("../utils/validation");
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || "college-management-secret";
-const JWT_EXPIRES_IN = "8h";
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
   message: { message: "Too many login attempts, please try again after 15 minutes." }
 });
+
+// Throttle the password-reset endpoints to blunt token brute-forcing and
+// forgot-password email spam.
+const passwordResetLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { message: "Too many password reset attempts, please try again after 15 minutes." }
+});
+
+// Reset tokens are stored hashed, so a database leak does not hand out working
+// tokens. The raw token goes only to the user (via the reset link/email).
+function hashResetToken(token) {
+  return crypto.createHash("sha256").update(String(token)).digest("hex");
+}
 
 function getRedirectPage(role) {
   return {
@@ -73,15 +86,23 @@ router.post("/login", authLimiter, (req, res) => {
   });
 });
 
-router.post("/forgot-password", (req, res) => {
+router.post("/forgot-password", passwordResetLimiter, (req, res) => {
   const { email } = req.body;
 
   if (!email || !emailPattern.test(String(email).trim())) {
     return res.status(400).json({ message: "Please provide a valid email address." });
   }
 
+  const isProduction = process.env.NODE_ENV === "production";
+
+  // In production, always return the same message to prevent user enumeration.
+  const safeMessage = "If an account exists with that email, a reset link has been sent.";
+
   const user = getUserAccountByEmail(String(email).trim().toLowerCase());
   if (!user) {
+    if (isProduction) {
+      return res.json({ message: safeMessage });
+    }
     return res.status(404).json({ message: "No account found for that email address." });
   }
 
@@ -94,7 +115,14 @@ router.post("/forgot-password", (req, res) => {
       SET password_reset_token = ?, password_reset_expires_at = ?
       WHERE id = ?
     `
-  ).run(resetToken, expiresAt, user.id);
+  ).run(hashResetToken(resetToken), expiresAt, user.id);
+
+  // In production the token must be delivered via email, NEVER in the HTTP
+  // response. In demo mode we return it for developer convenience.
+  if (isProduction) {
+    // TODO: integrate email service (SendGrid / SES / SMTP) to deliver the link.
+    return res.json({ message: safeMessage });
+  }
 
   const appOrigin = `${req.protocol}://${req.get("host")}`;
   const resetLink = `${appOrigin}/reset-password.html?token=${resetToken}`;
@@ -105,7 +133,7 @@ router.post("/forgot-password", (req, res) => {
   });
 });
 
-router.post("/reset-password", (req, res) => {
+router.post("/reset-password", passwordResetLimiter, (req, res) => {
   const { token, password, confirmPassword } = req.body;
 
   if (!token || !password || !confirmPassword) {
@@ -128,7 +156,7 @@ router.post("/reset-password", (req, res) => {
         WHERE password_reset_token = ?
       `
     )
-    .get(token);
+    .get(hashResetToken(token));
 
   if (!user) {
     return res.status(400).json({ message: "The reset token is invalid." });

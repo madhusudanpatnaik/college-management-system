@@ -138,7 +138,7 @@ router.get("/", roleMiddleware("admin", "faculty", "student"), (req, res) => {
     notices = db
       .prepare(
         `
-          SELECT
+          SELECT DISTINCT
             notices.id,
             notices.title,
             notices.content,

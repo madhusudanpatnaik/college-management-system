@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { getUserProfileById } = require("../config/db");
-
-const JWT_SECRET = process.env.JWT_SECRET || "college-management-secret";
+const { JWT_SECRET } = require("../config/auth");
 
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization || "";

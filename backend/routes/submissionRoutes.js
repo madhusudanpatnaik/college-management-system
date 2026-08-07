@@ -1,40 +1,12 @@
 const express = require("express");
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
+const { createUploader, removeUploadedFile } = require("../middleware/upload");
 const { db, getFacultyProfileByUserId, getStudentProfileByUserId } = require("../config/db");
 
 const router = express.Router();
-const uploadsDir = path.join(__dirname, "..", "uploads");
-
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadsDir),
-  filename: (_req, file, cb) => {
-    const safeName = file.originalname.replace(/\s+/g, "-").toLowerCase();
-    cb(null, `${Date.now()}-submission-${safeName}`);
-  }
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 10 * 1024 * 1024 },
-  fileFilter: (_req, file, cb) => {
-    const blocked = /\.(exe|bat|cmd|sh|php|jar|msi)$/i;
-    if (blocked.test(file.originalname)) {
-      return cb(new Error("This file type is not allowed."), false);
-    }
-    cb(null, true);
-  }
-});
-
-function removeUploadedFile(file) {
-  if (file && file.path && fs.existsSync(file.path)) {
-    fs.unlinkSync(file.path);
-  }
-}
+const upload = createUploader("submission");
 
 router.use(authMiddleware);
 

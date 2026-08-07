@@ -1,0 +1,24 @@
+node_modules
+npm-debug.log*
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+Dockerfile
+.dockerignore
+README.md
+LICENSE
+server.err
+server.out
+.DS_Store
+Thumbs.db
+
+# Let the container seed a fresh database; seed upload files self-heal on boot.
+database/cms.db
+database/cms.test.db
+backend/uploads
+
+# Tooling/skill scaffolding not needed at runtime.
+.agent
+.claude

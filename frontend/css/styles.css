@@ -1,6 +1,6 @@
-/* UI/UX Pro Max: Inter — #1 recommended for dashboards & admin panels (Minimal Swiss pairing).
-   font-display:swap prevents FOIT on slow Android connections. */
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&display=swap");
+/* Typography system: Space Grotesk (display) + Plus Jakarta Sans (body).
+   Fonts load via <link> tags in each page head — parallel with this stylesheet
+   rather than a render-blocking @import chain. */
 
 :root {
   /* ----- Brand / primary ramp ----- */
@@ -56,9 +56,9 @@
   --radius-lg: 20px;
   --radius-pill: 999px;
 
-  /* ----- Type (UI/UX Pro Max: Inter for dashboards — clean, legible, renders perfectly on Android) ----- */
-  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-display: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* ----- Type: distinctive display grotesk + warm legible body sans ----- */
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Space Grotesk", "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* ----- Spacing scale ----- */
   --space-1: 4px;
@@ -484,11 +484,28 @@ body.auth-page[data-page="login"] {
   z-index: 0;
 }
 
+/* College campus photo behind the brand panel. The dark gradient (first layer)
+   keeps the white heading and badge legible; the actual photo loads from
+   assets/college.jpg when present, otherwise the shipped campus.svg is shown. */
+.login-brand-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(118deg, rgba(2, 6, 23, 0.9) 0%, rgba(15, 23, 42, 0.74) 42%, rgba(30, 58, 138, 0.5) 78%, rgba(37, 99, 235, 0.42) 100%),
+    url("../assets/college.jpg"),
+    url("../assets/campus.svg");
+  background-size: cover;
+  background-position: center, center, center bottom;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
 .login-brand-overlay,
 .overlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center right, rgba(2, 6, 23, 0.85), transparent 50%);
+  background: radial-gradient(circle at center right, rgba(2, 6, 23, 0.55), transparent 55%);
   pointer-events: none;
   z-index: 0;
 }
@@ -826,7 +843,7 @@ body.auth-page[data-page="login"] {
   margin-top: 4px;
   min-height: 46px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: var(--primary);
   font-weight: 600;
   letter-spacing: 0.3px;
   box-shadow: none;
@@ -835,7 +852,7 @@ body.auth-page[data-page="login"] {
 .login-submit:hover,
 .btn-primary:hover {
   transform: translateY(-1px);
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: var(--primary-deep);
   box-shadow: none;
 }
 
@@ -1021,15 +1038,15 @@ body.auth-page[data-page="login"] {
 }
 
 .button-primary {
-  background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+  background: var(--primary);
   color: #fff;
-  box-shadow: 0 18px 30px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
 }
 
 .auth-page[data-page="login"] .button-primary,
 .auth-page[data-page="login"] .btn-primary,
 .auth-page[data-page="login"] .login-submit {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: var(--primary);
   box-shadow: none;
 }
 
@@ -1643,13 +1660,13 @@ body.app-page {
   justify-content: center;
   padding: 6px 10px;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.95), rgba(96, 165, 250, 0.92));
+  background: var(--primary);
   color: #ffffff;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 1px 2px rgba(2, 6, 23, 0.4);
 }
 
 .app-page .sidebar-brand-pill {
@@ -1801,11 +1818,11 @@ body.app-page {
   justify-content: center;
   border: 1px solid rgba(96, 165, 250, 0.22);
   border-radius: 14px;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.95), rgba(96, 165, 250, 0.88));
+  background: var(--primary);
   color: #ffffff;
   font-size: 0.9rem;
   font-weight: 700;
-  box-shadow: 0 0 18px rgba(59, 130, 246, 0.35);
+  box-shadow: 0 1px 2px rgba(2, 6, 23, 0.4);
 }
 
 .app-page .topbar .button-secondary,
@@ -2648,37 +2665,22 @@ body.app-page {
   transition: transform 0.08s ease;
 }
 
-/* --- Stat Card Accent Borders --- */
+/* --- Stat cards: one restrained, monochrome treatment (no rainbow) --- */
 .app-page .stat-card {
-  border-left: 3px solid transparent;
-  transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out, transform 0.25s var(--anim-easing);
+  border-left: none;
+  transition: box-shadow 0.24s var(--ease-out), border-color 0.24s var(--ease-out), transform 0.24s var(--ease-out);
 }
-.app-page .stat-card:nth-child(1) { border-left-color: var(--accent-blue); }
-.app-page .stat-card:nth-child(2) { border-left-color: var(--accent-emerald); }
-.app-page .stat-card:nth-child(3) { border-left-color: var(--accent-amber); }
-.app-page .stat-card:nth-child(4) { border-left-color: var(--accent-violet); }
 
 .app-page .stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
 }
 
-/* --- Stat Icon Color Accents --- */
-.app-page .stats-grid > .stat-card:nth-child(1) .stat-icon {
-  background: rgba(59, 130, 246, 0.12);
-  color: var(--accent-blue);
-}
-.app-page .stats-grid > .stat-card:nth-child(2) .stat-icon {
-  background: rgba(16, 185, 129, 0.12);
-  color: var(--accent-emerald);
-}
-.app-page .stats-grid > .stat-card:nth-child(3) .stat-icon {
-  background: rgba(245, 158, 11, 0.12);
-  color: var(--accent-amber);
-}
-.app-page .stats-grid > .stat-card:nth-child(4) .stat-icon {
-  background: rgba(139, 92, 246, 0.12);
-  color: var(--accent-violet);
+/* Monochrome icon chip — the number is the hero, not the colour. */
+.app-page .stats-grid > .stat-card .stat-icon {
+  background: rgba(15, 23, 42, 0.05);
+  color: var(--ink);
 }
 
 /* --- Upgraded Toast Notifications --- */
@@ -2722,11 +2724,11 @@ body.app-page {
 }
 
 .toast.success .toast-progress {
-  background: linear-gradient(90deg, var(--accent-emerald), #34d399);
+  background: var(--success-bright);
 }
 
 .toast.error .toast-progress {
-  background: linear-gradient(90deg, var(--danger), #f87171);
+  background: var(--danger);
 }
 
 .toast.success {
@@ -2928,28 +2930,9 @@ body.app-page {
   overflow: hidden;
 }
 
+/* Sidebar links: quiet hover, solid active — no shine sweep, no neon glow. */
 .app-page .sidebar-link::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(37, 99, 235, 0.18), transparent);
-  border-radius: 10px;
-  transform: translateX(-100%);
-  transition: transform 0.3s var(--anim-easing);
-  pointer-events: none;
-}
-
-.app-page .sidebar-link:hover::before {
-  transform: translateX(0);
-}
-
-.app-page .sidebar-link.active::before {
-  display: none;
-}
-
-/* --- Sidebar Active Link Glow --- */
-.app-page .sidebar-link.active {
-  box-shadow: 0 0 16px rgba(37, 99, 235, 0.25);
+  content: none;
 }
 
 /* --- Table Row Hover Enhancement --- */
@@ -3172,9 +3155,9 @@ body.app-page {
   transform: translateX(2px);
 }
 .app-page .sidebar-link.active {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.95), rgba(59, 130, 246, 0.85));
+  background: var(--primary);
   color: #ffffff;
-  box-shadow: 0 10px 22px -10px rgba(37, 99, 235, 0.9);
+  box-shadow: 0 1px 2px rgba(2, 6, 23, 0.35);
 }
 .app-page .sidebar-link.active::after {
   content: "";
@@ -3205,16 +3188,8 @@ body.app-page {
     border-color var(--dur) var(--ease-out);
 }
 .app-page .stat-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 3px;
-  background: var(--accent-blue);
-  opacity: 0.9;
+  content: none;
 }
-.app-page .stats-grid > .stat-card:nth-child(2)::before { background: var(--accent-emerald); }
-.app-page .stats-grid > .stat-card:nth-child(3)::before { background: var(--accent-amber); }
-.app-page .stats-grid > .stat-card:nth-child(4)::before { background: var(--accent-violet); }
 .app-page .stat-icon {
   width: 42px;
   height: 42px;
@@ -3351,15 +3326,15 @@ body.app-page {
     border-color var(--dur) var(--ease-out);
 }
 .app-page .button-primary {
-  background: linear-gradient(180deg, var(--primary-bright), var(--primary));
+  background: var(--primary);
   border-color: transparent;
   color: #fff;
-  box-shadow: var(--shadow-primary), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 .app-page .button-primary:hover {
-  background: linear-gradient(180deg, var(--primary), var(--primary-deep));
+  background: var(--primary-deep);
   transform: translateY(-1px);
-  box-shadow: 0 12px 26px -8px var(--primary-ring), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 .app-page .button:active { transform: translateY(0) scale(0.97); }
 .app-page .button-secondary,
@@ -4066,4 +4041,561 @@ body {
   .app-page .topbar-title h1 { font-size: 0.95rem; }
   .app-page .stat-card strong { font-size: 1.1rem; }
   .login-brand-copy h1 { font-size: 1.4rem; }
+}
+
+/* ============================================================
+   Placement Preparation
+   ============================================================ */
+.quiz-question,
+.result-card {
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-sm, 14px);
+  padding: 18px 20px;
+  background: var(--surface, #ffffff);
+  margin-bottom: 14px;
+}
+
+.quiz-question.needs-answer {
+  border-color: var(--danger-bright, #dc2626);
+  box-shadow: 0 0 0 1px var(--danger-bright, #dc2626);
+}
+
+.quiz-question-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.quiz-index,
+.result-icon {
+  font-weight: 800;
+  font-size: 0.85rem;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--surface-sunken, #f1f5f9);
+  color: var(--muted, #64748b);
+  flex: none;
+}
+
+.quiz-text {
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0 0 14px;
+  color: var(--ink, #0f172a);
+}
+
+.quiz-options {
+  display: grid;
+  gap: 10px;
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.quiz-option:hover {
+  border-color: var(--primary, #2563eb);
+  background: var(--surface-sunken, #f8fafc);
+}
+
+.quiz-option input {
+  accent-color: var(--primary, #2563eb);
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.quiz-option .opt-key {
+  font-weight: 800;
+  width: 22px;
+  color: var(--muted, #64748b);
+  flex: none;
+}
+
+.quiz-option .opt-text {
+  color: var(--text-soft, #334155);
+}
+
+.result-card.correct {
+  border-color: rgba(22, 163, 74, 0.4);
+  background: rgba(22, 163, 74, 0.05);
+}
+
+.result-card.incorrect {
+  border-color: rgba(220, 38, 38, 0.4);
+  background: rgba(220, 38, 38, 0.05);
+}
+
+.result-icon.correct {
+  background: rgba(22, 163, 74, 0.16);
+  color: #16a34a;
+}
+
+.result-icon.incorrect {
+  background: rgba(220, 38, 38, 0.16);
+  color: #dc2626;
+}
+
+.result-options {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.result-options .opt {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  background: var(--surface-sunken, #f1f5f9);
+  color: var(--text-soft, #334155);
+}
+
+.result-options .opt.right {
+  background: rgba(22, 163, 74, 0.12);
+  color: #15803d;
+  font-weight: 600;
+}
+
+.result-options .opt.wrong {
+  background: rgba(220, 38, 38, 0.12);
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.explanation {
+  border-left: 3px solid var(--primary, #2563eb);
+  background: var(--surface-sunken, #f8fafc);
+  padding: 12px 16px;
+  border-radius: 0 10px 10px 0;
+  font-size: 0.95rem;
+  color: var(--text-soft, #334155);
+  line-height: 1.55;
+}
+
+.explanation strong {
+  color: var(--ink, #0f172a);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.feedback-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.feedback-list li {
+  line-height: 1.5;
+  color: var(--text-soft, #334155);
+}
+
+.feedback-list li strong {
+  color: var(--ink, #0f172a);
+}
+
+.reco-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+  color: var(--text-soft, #334155);
+  line-height: 1.5;
+}
+
+/* ============================================================
+   Events
+   ============================================================ */
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+.event-card {
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-sm, 14px);
+  padding: 18px;
+  background: var(--surface, #fff);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.event-card.is-past { opacity: 0.7; }
+.event-card h3 { margin: 8px 0 4px; color: var(--ink, #0f172a); }
+.event-card p { color: var(--text-soft, #334155); line-height: 1.5; margin: 0 0 6px; }
+
+/* ============================================================
+   Digital ID card
+   ============================================================ */
+.id-card {
+  border-radius: 18px;
+  padding: 22px;
+  color: #fff;
+  background: linear-gradient(135deg, #1e293b 0%, #2563eb 100%);
+  box-shadow: 0 18px 40px -18px rgba(37, 99, 235, 0.6);
+}
+.id-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.id-college { display: block; font-weight: 800; font-size: 1.02rem; letter-spacing: 0.02em; }
+.id-type { display: block; font-size: 0.78rem; opacity: 0.8; margin-top: 2px; }
+.id-role-badge {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.id-card-body { display: flex; gap: 18px; align-items: center; margin: 20px 0; }
+.id-avatar {
+  width: 78px;
+  height: 78px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.9rem;
+  font-weight: 800;
+  flex: none;
+}
+.id-details h3 { margin: 0 0 2px; font-size: 1.25rem; color: #fff; }
+.id-details .muted-text { color: rgba(255, 255, 255, 0.75); }
+.id-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 18px;
+  margin-top: 14px;
+}
+.id-fields > div { display: flex; flex-direction: column; }
+.id-fields span { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.7; }
+.id-fields strong { font-size: 0.9rem; font-weight: 700; }
+.id-card-foot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  opacity: 0.8;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 12px;
+}
+
+/* ============================================================
+   Hall ticket
+   ============================================================ */
+.ticket-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+.ticket-card {
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 16px;
+  padding: 20px;
+  background: var(--surface, #fff);
+  border-top: 4px solid var(--primary, #2563eb);
+}
+.ticket-head { display: flex; justify-content: space-between; align-items: flex-start; }
+.ticket-college { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted, #64748b); }
+.ticket-head h3 { margin: 2px 0 0; color: var(--ink, #0f172a); }
+.ticket-seal {
+  width: 46px; height: 46px; border-radius: 12px;
+  background: var(--surface-sunken, #eef2f8);
+  color: var(--primary, #2563eb);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; flex: none;
+}
+.ticket-grid-info {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 18px;
+  margin: 18px 0;
+}
+.ticket-grid-info > div { display: flex; flex-direction: column; }
+.ticket-grid-info span { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted, #64748b); }
+.ticket-grid-info strong { color: var(--ink, #0f172a); font-size: 0.92rem; }
+.ticket-foot { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border, #e2e8f0); padding-top: 14px; gap: 12px; }
+
+/* ============================================================
+   About page
+   ============================================================ */
+.about-tagline { font-size: 1.05rem; color: var(--text-soft, #334155); margin: 0 0 16px; }
+.about-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+.about-meta > div { display: flex; flex-direction: column; gap: 2px; }
+.about-meta span { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted, #64748b); }
+.about-meta strong { color: var(--ink, #0f172a); }
+
+/* Conduct record accents */
+.list-card.conduct-appreciation { border-left: 3px solid #16a34a; }
+.list-card.conduct-warning { border-left: 3px solid #f59e0b; }
+.list-card.conduct-suspension,
+.list-card.conduct-fine { border-left: 3px solid #dc2626; }
+.list-card.conduct-note { border-left: 3px solid var(--primary, #2563eb); }
+
+/* ============================================================
+   Print (ID cards, hall tickets)
+   ============================================================ */
+@media print {
+  .sidebar, .topbar, .mobile-overlay, .inline-actions, .toast-stack { display: none !important; }
+  .app-shell, .content-shell, .page-body { display: block !important; margin: 0 !important; padding: 0 !important; background: #fff !important; }
+  .button { display: none !important; }
+  .panel, .id-card, .ticket-card { break-inside: avoid; }
+}
+
+/* Small screens */
+@media (max-width: 560px) {
+  .id-fields, .ticket-grid-info { grid-template-columns: 1fr; }
+  .id-card-body { flex-direction: column; text-align: center; }
+}
+
+/* ============================================================
+   Timetable — compact Excel-style grid
+   ============================================================ */
+.tt-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: var(--radius-sm, 12px);
+  -webkit-overflow-scrolling: touch;
+}
+.tt-grid {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 640px;
+  font-size: 0.82rem;
+  background: var(--surface, #fff);
+}
+.tt-grid th,
+.tt-grid td {
+  border: 1px solid var(--border, #e2e8f0);
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+.tt-grid thead th {
+  background: var(--surface-sunken, #f1f5f9);
+  color: var(--muted, #64748b);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px 6px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.tt-corner {
+  position: sticky;
+  left: 0;
+  z-index: 3 !important;
+  background: var(--surface-sunken, #eef2f8) !important;
+}
+.tt-time {
+  background: var(--surface-sunken, #f8fafc);
+  color: var(--ink, #0f172a);
+  font-weight: 700;
+  font-size: 0.74rem;
+  white-space: nowrap;
+  padding: 6px 10px;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 84px;
+}
+.tt-time-end {
+  display: block;
+  font-weight: 500;
+  font-size: 0.66rem;
+  color: var(--muted, #94a3b8);
+}
+.tt-empty { background: repeating-linear-gradient(45deg, transparent, transparent 6px, rgba(148, 163, 184, 0.06) 6px, rgba(148, 163, 184, 0.06) 12px); }
+.tt-cell { padding: 4px !important; }
+.tt-entry {
+  position: relative;
+  background: var(--primary-50, #eff6ff);
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  border-radius: 8px;
+  padding: 6px 8px;
+  min-height: 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+}
+.tt-entry + .tt-entry { margin-top: 4px; }
+.tt-code { font-weight: 800; color: var(--primary, #2563eb); font-size: 0.8rem; }
+.tt-room { font-size: 0.7rem; color: var(--text-soft, #475569); }
+.tt-faculty { font-size: 0.66rem; color: var(--muted, #94a3b8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+.tt-del {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  border: none;
+  background: transparent;
+  color: var(--danger-bright, #dc2626);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+.tt-del:hover { background: rgba(220, 38, 38, 0.12); }
+
+@media print {
+  .tt-del { display: none !important; }
+  .tt-wrap { overflow: visible; }
+}
+
+/* ============================================================
+   Typography & interaction refinements (taste pass)
+   ============================================================ */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Headings use the distinctive display grotesk with tightened tracking and
+   balanced wrapping so they read as intentional, not default. */
+h1, h2, h3,
+.panel-heading h2,
+.table-head h2,
+.id-details h3,
+.ticket-head h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+p,
+.muted-text,
+.stat-label {
+  text-wrap: pretty;
+}
+
+/* Tabular figures: numeric data aligns in columns and never jitters on update. */
+.stat-card strong,
+.data-table,
+.tt-grid,
+.id-fields strong,
+.ticket-grid-info strong,
+.about-meta strong,
+.reco-list,
+.status-badge {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* KPI numbers get the display grotesk with a touch more presence. */
+.stat-card strong {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* Consistent, accessible keyboard focus ring across all interactive elements. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.button:focus-visible,
+.menu-toggle:focus-visible {
+  outline: 2px solid var(--primary-ring, rgba(37, 99, 235, 0.38));
+  outline-offset: 2px;
+  border-radius: var(--radius-sm, 10px);
+}
+
+/* ============================================================
+   Premium restraint pass — dashboard nesting
+   ============================================================ */
+/* Nested cards inside dashboard panels read as card-in-card (a generic-AI
+   tell). Flatten them into quiet inset wells: sunken bg, no border/shadow. */
+body[data-page="dashboard"] .panel .list-card,
+body[data-page="dashboard"] .panel .notice-card {
+  border: none;
+  box-shadow: none;
+  background: var(--surface-sunken);
+}
+
+/* ============================================================
+   Smooth navigation — cross-document View Transitions
+   ============================================================ */
+/* Progressive enhancement: Chromium cross-fades between page navigations;
+   other browsers ignore this entirely. */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.22s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The sticky topbar keeps its identity across navigations so it doesn't
+   flash — the page content cross-fades beneath it. */
+.app-page .topbar {
+  view-transition-name: topbar;
+}
+
+::view-transition-old(topbar),
+::view-transition-new(topbar) {
+  animation: none;
+}
+
+/* Respect users who opt out of motion: no page cross-fade, no reveals. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-old(topbar),
+  ::view-transition-new(topbar) {
+    animation: none !important;
+  }
+
+  .page-body *,
+  .stat-card,
+  .panel,
+  .list-card {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Smooth in-page scrolling (anchors, scrollIntoView) — disabled for users
+   who prefer reduced motion. */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

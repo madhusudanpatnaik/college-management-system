@@ -4,9 +4,9 @@ const bcrypt = require("bcryptjs");
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 const { db, getFacultyProfileByUserId } = require("../config/db");
+const { emailPattern } = require("../utils/validation");
 
 const router = express.Router();
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const allowedDays = new Set(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]);
 
 function getDepartmentId(code) {

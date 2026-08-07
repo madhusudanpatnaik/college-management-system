@@ -1,10 +1,14 @@
 const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcryptjs");
-const initSqlJs = require("sql.js");
+const Database = require("better-sqlite3");
+const { PLACEMENT_QUESTIONS } = require("./placementData");
 
 const databaseDir = path.join(__dirname, "..", "..", "database");
-const databasePath = path.join(databaseDir, "cms.db");
+// The test suite runs against an isolated database file so it never mutates the
+// demo/production data. Jest sets NODE_ENV=test automatically.
+const databaseFile = process.env.NODE_ENV === "test" ? "cms.test.db" : "cms.db";
+const databasePath = path.join(databaseDir, databaseFile);
 const schemaPath = path.join(databaseDir, "cms.sql");
 const uploadsDir = path.join(__dirname, "..", "uploads");
 
@@ -16,81 +20,69 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
+// Normalise call-site params into better-sqlite3's bind form. Supports
+// .run(a, b), .run([a, b]) and .run({ name: v }), and coerces the value types
+// better-sqlite3 rejects (undefined -> NULL, boolean -> 0/1).
+function coerce(value) {
+  if (value === undefined) return null;
+  if (typeof value === "boolean") return value ? 1 : 0;
+  return value;
+}
+
+function toBindArgs(params) {
+  if (
+    params.length === 1 &&
+    params[0] &&
+    typeof params[0] === "object" &&
+    !Array.isArray(params[0]) &&
+    !Buffer.isBuffer(params[0])
+  ) {
+    // Named-parameter object — passed through as a single argument.
+    const named = {};
+    for (const [key, value] of Object.entries(params[0])) named[key] = coerce(value);
+    return [named];
+  }
+
+  const positional = params.length === 1 && Array.isArray(params[0]) ? params[0] : params;
+  return positional.map(coerce);
+}
+
 class StatementWrapper {
   constructor(driver, sql) {
     this.driver = driver;
     this.sql = sql;
+    this._stmt = null;
+  }
+
+  statement() {
+    this.driver.ensureReady();
+    if (!this._stmt) {
+      this._stmt = this.driver.database.prepare(this.sql);
+    }
+    return this._stmt;
   }
 
   get(...params) {
-    this.driver.ensureReady();
-    const statement = this.driver.database.prepare(this.sql);
-
-    try {
-      const normalized = this.driver.normalizeParams(params);
-      if (normalized !== undefined) {
-        statement.bind(normalized);
-      }
-
-      if (statement.step()) {
-        return statement.getAsObject();
-      }
-
-      return undefined;
-    } finally {
-      statement.free();
-    }
+    return this.statement().get(...toBindArgs(params));
   }
 
   all(...params) {
-    this.driver.ensureReady();
-    const statement = this.driver.database.prepare(this.sql);
-
-    try {
-      const normalized = this.driver.normalizeParams(params);
-      if (normalized !== undefined) {
-        statement.bind(normalized);
-      }
-
-      const rows = [];
-      while (statement.step()) {
-        rows.push(statement.getAsObject());
-      }
-      return rows;
-    } finally {
-      statement.free();
-    }
+    return this.statement().all(...toBindArgs(params));
   }
 
   run(...params) {
-    this.driver.ensureReady();
-    const statement = this.driver.database.prepare(this.sql);
-
-    try {
-      const normalized = this.driver.normalizeParams(params);
-      if (normalized !== undefined) {
-        statement.run(normalized);
-      } else {
-        statement.run();
-      }
-    } finally {
-      statement.free();
-    }
-
-    const result = {
-      lastInsertRowid: this.driver.getLastInsertRowid(),
-      changes: this.driver.getRowsModified()
-    };
-
-    this.driver.persistIfNeeded();
-    return result;
+    const info = this.statement().run(...toBindArgs(params));
+    return { lastInsertRowid: Number(info.lastInsertRowid), changes: info.changes };
   }
 }
 
 class SQLDriver {
   constructor() {
     this.database = null;
+    // Retained for API compatibility with earlier call sites; no longer used
+    // now that writes go straight to a real file-backed database.
     this.inTransaction = 0;
+    this.bulkLoading = false;
   }
 
   attachDatabase(database) {
@@ -103,30 +95,14 @@ class SQLDriver {
     }
   }
 
-  normalizeParams(params) {
-    if (!params.length) {
-      return undefined;
-    }
-
-    if (
-      params.length === 1 &&
-      (Array.isArray(params[0]) || (params[0] && typeof params[0] === "object" && !Buffer.isBuffer(params[0])))
-    ) {
-      return params[0];
-    }
-
-    return params;
-  }
-
   pragma(statement) {
     this.ensureReady();
-    this.database.exec(`PRAGMA ${statement}`);
+    this.database.pragma(statement);
   }
 
   exec(sql) {
     this.ensureReady();
     this.database.exec(sql);
-    this.persistIfNeeded();
   }
 
   prepare(sql) {
@@ -134,51 +110,30 @@ class SQLDriver {
     return new StatementWrapper(this, sql);
   }
 
+  // better-sqlite3 wraps fn in a real, atomic SQLite transaction and returns a
+  // callable — matching the previous driver's contract.
   transaction(fn) {
-    return (...args) => {
-      this.ensureReady();
-      this.database.exec("BEGIN");
-      this.inTransaction += 1;
-
-      try {
-        const result = fn(...args);
-        this.database.exec("COMMIT");
-        this.inTransaction -= 1;
-        this.persistIfNeeded(true);
-        return result;
-      } catch (error) {
-        try {
-          this.database.exec("ROLLBACK");
-        } catch (_rollbackError) {
-          // Ignore rollback errors and rethrow the original issue.
-        }
-
-        this.inTransaction = Math.max(0, this.inTransaction - 1);
-        throw error;
-      }
-    };
+    this.ensureReady();
+    return this.database.transaction(fn);
   }
 
   getLastInsertRowid() {
-    const result = this.database.exec("SELECT last_insert_rowid() AS id");
-    return result[0]?.values?.[0]?.[0] ?? 0;
+    return Number(this.database.prepare("SELECT last_insert_rowid() AS id").get().id);
   }
 
   getRowsModified() {
-    return this.database.getRowsModified();
+    return this.database.prepare("SELECT changes() AS n").get().n;
   }
 
-  persistIfNeeded(force = false) {
-    if (!this.database) {
-      return;
-    }
+  // With a durable, file-backed database there is no manual full-file
+  // serialization to perform. Kept as a no-op so existing call sites are safe.
+  persistIfNeeded() {}
 
-    if (!force && this.inTransaction > 0) {
-      return;
+  close() {
+    if (this.database) {
+      this.database.close();
+      this.database = null;
     }
-
-    const buffer = Buffer.from(this.database.export());
-    fs.writeFileSync(databasePath, buffer);
   }
 }
 
@@ -261,7 +216,7 @@ function getUserProfileById(userId) {
         LEFT JOIN branches branch_lookup ON branch_lookup.id = COALESCE(s.branch_id, f.branch_id)
         LEFT JOIN branches student_branch ON student_branch.id = s.branch_id
         LEFT JOIN branches faculty_branch ON faculty_branch.id = f.branch_id
-        WHERE u.id = ?
+        WHERE u.id = ? AND u.is_active = 1
       `
     )
     .get(userId);
@@ -299,7 +254,7 @@ function getUserAccountByEmail(email) {
         LEFT JOIN branches branch_lookup ON branch_lookup.id = COALESCE(s.branch_id, f.branch_id)
         LEFT JOIN branches student_branch ON student_branch.id = s.branch_id
         LEFT JOIN branches faculty_branch ON faculty_branch.id = f.branch_id
-        WHERE LOWER(u.email) = LOWER(?)
+        WHERE LOWER(u.email) = LOWER(?) AND u.is_active = 1
       `
     )
     .get(email);
@@ -335,11 +290,24 @@ function getFacultyProfileByUserId(userId) {
     .get(userId);
 }
 
+// Strict identifier pattern: only letters, digits, and underscores are allowed.
+// This prevents SQL injection when table/column names are interpolated into DDL.
+const SAFE_IDENTIFIER = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+
+function assertSafeIdentifier(value, label) {
+  if (!SAFE_IDENTIFIER.test(value)) {
+    throw new Error(`Unsafe ${label}: "${value}" — only letters, digits, and underscores are allowed.`);
+  }
+}
+
 function getTableColumns(tableName) {
+  assertSafeIdentifier(tableName, "table name");
   return db.prepare(`PRAGMA table_info(${tableName})`).all().map((column) => column.name);
 }
 
 function ensureColumn(tableName, columnName, definition) {
+  assertSafeIdentifier(tableName, "table name");
+  assertSafeIdentifier(columnName, "column name");
   if (!getTableColumns(tableName).includes(columnName)) {
     db.exec(`ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${definition}`);
   }
@@ -494,6 +462,24 @@ function ensureAcademicSeedData() {
 
     db.prepare("UPDATE timetable SET department_id = ? WHERE course_id = ?").run(mappedDepartmentId, course.id);
   });
+
+  // The legacy placeholder departments (CSE/ECE/BBA from the original schema) are
+  // superseded by BTECH/MTECH/MBA/MCA. Once the migration above has moved every
+  // reference off them, remove the now-orphaned placeholders so they no longer
+  // clutter department/branch selectors. Guarded to only delete rows with zero
+  // dependents, so admin-created departments are never touched.
+  db.prepare(
+    `
+      DELETE FROM departments
+      WHERE UPPER(code) IN ('CSE', 'ECE', 'BBA')
+        AND id NOT IN (SELECT department_id FROM branches WHERE department_id IS NOT NULL)
+        AND id NOT IN (SELECT department_id FROM courses WHERE department_id IS NOT NULL)
+        AND id NOT IN (SELECT department_id FROM faculty WHERE department_id IS NOT NULL)
+        AND id NOT IN (SELECT department_id FROM students WHERE department_id IS NOT NULL)
+        AND id NOT IN (SELECT department_id FROM users WHERE department_id IS NOT NULL)
+        AND id NOT IN (SELECT department_id FROM timetable WHERE department_id IS NOT NULL)
+    `
+  ).run();
 }
 
 function createUserIfMissing({ role, fullName, email, password, departmentId = null }) {
@@ -514,6 +500,27 @@ function createUserIfMissing({ role, fullName, email, password, departmentId = n
     .run(role, fullName, email, passwordHash, departmentId);
 
   return result.lastInsertRowid;
+}
+
+// The seed data references a handful of uploaded files. Regenerate them on disk
+// when missing so a fresh checkout or container (where uploads/ is not shipped)
+// stays consistent — no seeded row should point at a file that does not exist.
+function ensureSeedUploadFiles() {
+  const seedFiles = {
+    "seed-assignment-brief.txt":
+      "Assignment brief: design a third-normal-form schema for the supplied admissions workflow and document your assumptions.\n",
+    "seed-submission-answer.txt":
+      "Sample submission placeholder uploaded for the seeded assignment.\n",
+    "seed-db-handbook.txt":
+      "Database revision notes covering ER modeling, normalization, indexing, and transactions.\n"
+  };
+
+  for (const [name, content] of Object.entries(seedFiles)) {
+    const filePath = path.join(uploadsDir, name);
+    if (!fs.existsSync(filePath)) {
+      fs.writeFileSync(filePath, content, "utf8");
+    }
+  }
 }
 
 function ensureSeedUsers() {
@@ -610,6 +617,7 @@ function ensureSeedUsers() {
   seedAssignments(studentId, facultyId);
   seedMaterials(facultyId);
   seedOutingRequests(studentId);
+  seedCommunityData(studentId, adminUserId, facultyUserId);
 }
 
 function seedFees(studentId) {
@@ -852,28 +860,224 @@ function seedOutingRequests(studentId) {
   ).run(studentId, "Medical appointment", "City Health Centre", "2026-03-29", "2026-03-29", "pending");
 }
 
+function ensurePlacementSchema() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS placement_questions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      category TEXT NOT NULL,
+      topic TEXT NOT NULL,
+      difficulty TEXT NOT NULL CHECK (difficulty IN ('easy', 'medium', 'hard')),
+      question TEXT NOT NULL,
+      option_a TEXT NOT NULL,
+      option_b TEXT NOT NULL,
+      option_c TEXT NOT NULL,
+      option_d TEXT NOT NULL,
+      correct_option TEXT NOT NULL CHECK (correct_option IN ('A', 'B', 'C', 'D')),
+      explanation TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS placement_attempts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      student_id INTEGER NOT NULL,
+      question_id INTEGER NOT NULL,
+      selected_option TEXT NOT NULL CHECK (selected_option IN ('A', 'B', 'C', 'D')),
+      is_correct INTEGER NOT NULL,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (student_id) REFERENCES students (id) ON DELETE CASCADE,
+      FOREIGN KEY (question_id) REFERENCES placement_questions (id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_placement_attempts_student ON placement_attempts (student_id);
+    CREATE INDEX IF NOT EXISTS idx_placement_questions_category ON placement_questions (category);
+  `);
+}
+
+function seedPlacementQuestions() {
+  const count = db.prepare("SELECT COUNT(*) AS total FROM placement_questions").get();
+  if (count.total > 0) {
+    return;
+  }
+
+  const insert = db.prepare(
+    `
+      INSERT INTO placement_questions
+        (category, topic, difficulty, question, option_a, option_b, option_c, option_d, correct_option, explanation)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `
+  );
+
+  for (const item of PLACEMENT_QUESTIONS) {
+    insert.run(
+      item.category,
+      item.topic,
+      item.difficulty,
+      item.question,
+      item.optionA,
+      item.optionB,
+      item.optionC,
+      item.optionD,
+      item.correct,
+      item.explanation
+    );
+  }
+}
+
+function ensureCommunitySchema() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      description TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'general',
+      event_date TEXT NOT NULL,
+      event_time TEXT,
+      venue TEXT,
+      created_by INTEGER,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE SET NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS complaints (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      student_id INTEGER NOT NULL,
+      category TEXT NOT NULL DEFAULT 'general',
+      subject TEXT NOT NULL,
+      description TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'in_progress', 'resolved')),
+      response TEXT,
+      responded_by INTEGER,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT,
+      FOREIGN KEY (student_id) REFERENCES students (id) ON DELETE CASCADE,
+      FOREIGN KEY (responded_by) REFERENCES users (id) ON DELETE SET NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS disciplinary_actions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      student_id INTEGER NOT NULL,
+      action_type TEXT NOT NULL DEFAULT 'warning'
+        CHECK (action_type IN ('warning', 'suspension', 'fine', 'note')),
+      reason TEXT NOT NULL,
+      action_date TEXT NOT NULL,
+      remarks TEXT,
+      recorded_by INTEGER,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (student_id) REFERENCES students (id) ON DELETE CASCADE,
+      FOREIGN KEY (recorded_by) REFERENCES users (id) ON DELETE SET NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS hall_tickets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      student_id INTEGER NOT NULL,
+      exam_name TEXT NOT NULL,
+      subject TEXT NOT NULL,
+      exam_date TEXT NOT NULL,
+      exam_time TEXT NOT NULL,
+      hall TEXT NOT NULL,
+      seat_no TEXT NOT NULL,
+      created_by INTEGER,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (student_id) REFERENCES students (id) ON DELETE CASCADE,
+      FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE SET NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_complaints_student ON complaints (student_id);
+    CREATE INDEX IF NOT EXISTS idx_disciplinary_student ON disciplinary_actions (student_id);
+    CREATE INDEX IF NOT EXISTS idx_hall_tickets_student ON hall_tickets (student_id);
+    CREATE INDEX IF NOT EXISTS idx_events_date ON events (event_date);
+  `);
+
+  // 'appreciation' was retired from the conduct types; migrate any legacy rows
+  // to a neutral 'note' so existing databases stay valid under the new rules.
+  db.prepare("UPDATE disciplinary_actions SET action_type = 'note' WHERE action_type = 'appreciation'").run();
+}
+
+function seedCommunityData(studentId, adminUserId, facultyUserId) {
+  if (db.prepare("SELECT COUNT(*) AS total FROM events").get().total === 0) {
+    const insertEvent = db.prepare(
+      `INSERT INTO events (title, description, category, event_date, event_time, venue, created_by)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`
+    );
+    insertEvent.run("Annual Tech Symposium 2026", "A day of technical talks, project expos, and coding contests open to all branches.", "academic", "2026-08-14", "09:30", "Main Auditorium", adminUserId);
+    insertEvent.run("Placement Readiness Bootcamp", "Aptitude, group discussion, and mock interview drills led by the placement cell.", "placement", "2026-07-22", "10:00", "Seminar Hall 2", facultyUserId);
+    insertEvent.run("Inter-College Cultural Fest", "Music, dance, and drama performances with participation from neighbouring colleges.", "cultural", "2026-09-05", "17:00", "Open Air Theatre", adminUserId);
+  }
+
+  if (studentId && db.prepare("SELECT COUNT(*) AS total FROM complaints").get().total === 0) {
+    db.prepare(
+      `INSERT INTO complaints (student_id, category, subject, description, status, response, responded_by, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    ).run(
+      studentId,
+      "infrastructure",
+      "Projector not working in Lab-201",
+      "The projector in Lab-201 has been flickering during afternoon sessions for the past week.",
+      "in_progress",
+      "Maintenance has been notified and a replacement bulb is on order.",
+      adminUserId,
+      "2026-07-02T10:15:00"
+    );
+  }
+
+  if (studentId && db.prepare("SELECT COUNT(*) AS total FROM disciplinary_actions").get().total === 0) {
+    db.prepare(
+      `INSERT INTO disciplinary_actions (student_id, action_type, reason, action_date, remarks, recorded_by)
+       VALUES (?, ?, ?, ?, ?, ?)`
+    ).run(
+      studentId,
+      "note",
+      "Consistently punctual and actively participates in class and lab sessions.",
+      "2026-06-20",
+      "Positive classroom conduct noted by the mentor.",
+      facultyUserId
+    );
+  }
+
+  if (studentId && db.prepare("SELECT COUNT(*) AS total FROM hall_tickets").get().total === 0) {
+    const insertTicket = db.prepare(
+      `INSERT INTO hall_tickets (student_id, exam_name, subject, exam_date, exam_time, hall, seat_no, created_by)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    );
+    insertTicket.run(studentId, "End Semester Examination - Sem 5", "Database Systems (CSE501)", "2026-08-05", "10:00", "Block A - Hall 1", "A-014", adminUserId);
+    insertTicket.run(studentId, "End Semester Examination - Sem 5", "Web Engineering (CSE502)", "2026-08-08", "10:00", "Block A - Hall 1", "A-014", adminUserId);
+  }
+}
+
 async function initializeDatabase() {
   if (db.database) {
     return;
   }
 
-  const SQL = await initSqlJs({
-    locateFile: (file) => path.join(__dirname, "..", "..", "node_modules", "sql.js", "dist", file)
-  });
-
-  const existingBuffer =
-    fs.existsSync(databasePath) && fs.statSync(databasePath).size > 0 ? fs.readFileSync(databasePath) : null;
-  const database = existingBuffer ? new SQL.Database(existingBuffer) : new SQL.Database();
+  const database = new Database(databasePath);
+  // WAL lets readers run concurrently with a writer (no full-file locking);
+  // NORMAL sync + a busy timeout keep it durable without fsync on every commit.
+  database.pragma("journal_mode = WAL");
+  database.pragma("synchronous = NORMAL");
+  database.pragma("foreign_keys = ON");
+  database.pragma("busy_timeout = 5000");
 
   db.attachDatabase(database);
-  db.pragma("foreign_keys = ON");
 
-  const schema = fs.readFileSync(schemaPath, "utf8");
-  db.exec(schema);
-  ensureAcademicSchema();
-  ensureAcademicSeedData();
-  ensureSeedUsers();
-  db.persistIfNeeded(true);
+  // Schema creation + seeding run inside a single atomic transaction, so startup
+  // either fully succeeds or leaves the database untouched.
+  const bootstrap = database.transaction(() => {
+    const schema = fs.readFileSync(schemaPath, "utf8");
+    db.exec(schema);
+    ensureAcademicSchema();
+    ensureAcademicSeedData();
+    ensurePlacementSchema();
+    ensureCommunitySchema();
+
+    // Seed data (demo users with known passwords, sample assignments, etc.)
+    // must NEVER run in production — it would create backdoor accounts.
+    if (process.env.NODE_ENV !== "production") {
+      seedPlacementQuestions();
+      ensureSeedUploadFiles();
+      ensureSeedUsers();
+    }
+  });
+  bootstrap();
 }
 
 module.exports = {

@@ -48,12 +48,6 @@ const API_BASE = `${APP_BASE}/api`;
 const TOKEN_KEY = "cms_token";
 const USER_KEY = "cms_user";
 
-const DEPARTMENTS = [
-  { code: "CSE", name: "Computer Science and Engineering" },
-  { code: "ECE", name: "Electronics and Communication Engineering" },
-  { code: "BBA", name: "Business Administration" }
-];
-
 const PAGE_ACCESS = {
   dashboard: ["admin", "faculty", "student"],
   academics: ["admin"],
@@ -66,7 +60,14 @@ const PAGE_ACCESS = {
   assignments: ["admin", "faculty", "student"],
   notices: ["admin", "faculty", "student"],
   materials: ["admin", "faculty", "student"],
-  outing: ["admin", "faculty", "student"]
+  outing: ["admin", "faculty", "student"],
+  placement: ["admin", "faculty", "student"],
+  events: ["admin", "faculty", "student"],
+  complaints: ["admin", "faculty", "student"],
+  disciplinary: ["admin", "faculty", "student"],
+  halltickets: ["admin", "faculty", "student"],
+  about: ["admin", "faculty", "student"],
+  profile: ["admin", "faculty", "student"]
 };
 
 const MENU_ITEMS = {
@@ -82,7 +83,14 @@ const MENU_ITEMS = {
     { page: "assignments", label: "Assignments", href: "assignments.html", icon: "assignments" },
     { page: "materials", label: "Materials", href: "materials.html", icon: "materials" },
     { page: "notices", label: "Notices", href: "notices.html", icon: "notices" },
-    { page: "outing", label: "Outing", href: "outing.html", icon: "outing" }
+    { page: "outing", label: "Outing", href: "outing.html", icon: "outing" },
+    { page: "placement", label: "Placement Prep", href: "placement.html", icon: "placement" },
+    { page: "events", label: "Events", href: "events.html", icon: "events" },
+    { page: "complaints", label: "Complaints", href: "complaints.html", icon: "complaints" },
+    { page: "disciplinary", label: "Conduct", href: "disciplinary.html", icon: "disciplinary" },
+    { page: "halltickets", label: "Hall Tickets", href: "hall-tickets.html", icon: "halltickets" },
+    { page: "profile", label: "My Profile", href: "profile.html", icon: "profile" },
+    { page: "about", label: "About College", href: "about.html", icon: "about" }
   ],
   faculty: [
     { page: "dashboard", label: "Dashboard", href: "dashboard.html", icon: "dashboard" },
@@ -93,7 +101,14 @@ const MENU_ITEMS = {
     { page: "assignments", label: "Assignments", href: "assignments.html", icon: "assignments" },
     { page: "materials", label: "Materials", href: "materials.html", icon: "materials" },
     { page: "notices", label: "Notices", href: "notices.html", icon: "notices" },
-    { page: "outing", label: "Outing", href: "outing.html", icon: "outing" }
+    { page: "outing", label: "Outing", href: "outing.html", icon: "outing" },
+    { page: "placement", label: "Placement Prep", href: "placement.html", icon: "placement" },
+    { page: "events", label: "Events", href: "events.html", icon: "events" },
+    { page: "complaints", label: "Complaints", href: "complaints.html", icon: "complaints" },
+    { page: "disciplinary", label: "Conduct", href: "disciplinary.html", icon: "disciplinary" },
+    { page: "halltickets", label: "Hall Tickets", href: "hall-tickets.html", icon: "halltickets" },
+    { page: "profile", label: "My Profile", href: "profile.html", icon: "profile" },
+    { page: "about", label: "About College", href: "about.html", icon: "about" }
   ],
   student: [
     { page: "dashboard", label: "Dashboard", href: "dashboard.html", icon: "dashboard" },
@@ -104,7 +119,14 @@ const MENU_ITEMS = {
     { page: "assignments", label: "Assignments", href: "assignments.html", icon: "assignments" },
     { page: "materials", label: "Materials", href: "materials.html", icon: "materials" },
     { page: "notices", label: "Notices", href: "notices.html", icon: "notices" },
-    { page: "outing", label: "Outing", href: "outing.html", icon: "outing" }
+    { page: "outing", label: "Outing", href: "outing.html", icon: "outing" },
+    { page: "placement", label: "Placement Prep", href: "placement.html", icon: "placement" },
+    { page: "events", label: "Events", href: "events.html", icon: "events" },
+    { page: "complaints", label: "Complaints", href: "complaints.html", icon: "complaints" },
+    { page: "disciplinary", label: "My Conduct", href: "disciplinary.html", icon: "disciplinary" },
+    { page: "halltickets", label: "Hall Tickets", href: "hall-tickets.html", icon: "halltickets" },
+    { page: "profile", label: "My ID Card", href: "profile.html", icon: "profile" },
+    { page: "about", label: "About College", href: "about.html", icon: "about" }
   ]
 };
 
@@ -132,7 +154,21 @@ const ICON_PATHS = {
   outing:
     '<path d="M12 3 4 7l8 4 8-4-8-4Z"/><path d="M4 11l8 4 8-4"/><path d="M4 15l8 4 8-4"/>',
   trash:
-    '<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>'
+    '<path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>',
+  placement:
+    '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/>',
+  events:
+    '<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="m12 13 1.2 2.4 2.6.4-1.9 1.8.5 2.6-2.4-1.3-2.4 1.3.5-2.6-1.9-1.8 2.6-.4z"/>',
+  complaints:
+    '<path d="M21 12a8 8 0 0 1-8 8H7l-4 3v-5a8 8 0 1 1 18-6Z"/><path d="M12 8v4M12 16h.01"/>',
+  disciplinary:
+    '<path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6l-7-3Z"/><path d="m9.5 12 1.8 1.8 3.5-3.6"/>',
+  halltickets:
+    '<path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8Z"/><path d="M14 6v12"/>',
+  about:
+    '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+  profile:
+    '<rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8.5" cy="11" r="2.2"/><path d="M5 16.5c.6-1.6 2-2.5 3.5-2.5s2.9.9 3.5 2.5M14.5 9.5h4M14.5 13h4"/>'
 };
 
 const STATE = {
@@ -343,10 +379,6 @@ function renderLoading(_message) {
   }
 }
 
-function buildDepartmentOptions() {
-  return DEPARTMENTS.map((item) => `<option value="${item.code}">${item.name}</option>`).join("");
-}
-
 async function api(path, options = {}) {
   const isFormData = options.body instanceof FormData;
   const headers = {
@@ -409,6 +441,81 @@ async function initializeProtectedPage(page) {
   renderShell(page);
   window.scrollTo({ top: 0, behavior: "smooth" });
   await renderPage(page);
+  initRealtime(page);
+}
+
+// Which pages should re-render when a given resource changes on the server.
+const RESOURCE_TO_PAGES = {
+  events: ["events", "dashboard"],
+  notices: ["notices", "dashboard"],
+  complaints: ["complaints"],
+  disciplinary: ["disciplinary"],
+  "hall-tickets": ["halltickets"],
+  students: ["students", "dashboard"],
+  faculty: ["faculty", "dashboard"],
+  academics: ["academics"],
+  attendance: ["attendance", "dashboard"],
+  results: ["exams", "dashboard"],
+  assignments: ["assignments", "dashboard"],
+  materials: ["materials", "dashboard"],
+  outing: ["outing", "dashboard"],
+  submissions: ["assignments"]
+};
+
+let realtimeSource = null;
+let realtimeTeardownBound = false;
+
+function closeRealtime() {
+  if (realtimeSource) {
+    realtimeSource.close();
+    realtimeSource = null;
+  }
+}
+
+// Subscribe to the server's SSE stream and live-refresh the current page when a
+// resource it depends on changes (progressive enhancement — silently no-ops if
+// unsupported).
+function initRealtime(page) {
+  if (!STATE.token || typeof EventSource === "undefined") return;
+
+  // An SSE stream holds one of the browser's ~6 per-origin HTTP/1.1 connections
+  // open. If it isn't closed before navigating, rapid page-to-page clicks pile
+  // up half-open streams and starve the connection pool, stalling later loads.
+  // Closing on pagehide frees the slot the instant the page is left.
+  if (!realtimeTeardownBound) {
+    realtimeTeardownBound = true;
+    window.addEventListener("pagehide", closeRealtime);
+  }
+
+  try {
+    closeRealtime();
+    realtimeSource = new EventSource(`${API_BASE}/realtime?token=${encodeURIComponent(STATE.token)}`);
+
+    let refreshTimer = null;
+    realtimeSource.addEventListener("change", (event) => {
+      let resource;
+      try {
+        resource = JSON.parse(event.data).resource;
+      } catch (_error) {
+        return;
+      }
+      const pages = RESOURCE_TO_PAGES[resource];
+      if (!pages || !pages.includes(page)) return;
+
+      // Debounce so bursts of changes (and the acting user's own mutation)
+      // collapse into a single refresh.
+      clearTimeout(refreshTimer);
+      refreshTimer = setTimeout(() => {
+        renderPage(page).catch(() => {});
+      }, 600);
+    });
+
+    realtimeSource.onerror = () => {
+      /* EventSource reconnects automatically; nothing to do. */
+    };
+  } catch (_error) {
+    /* Real-time updates are optional. */
+  }
 }
 
 function renderShell(page) {
@@ -547,6 +654,21 @@ function bindLoginForm() {
   const roleField = document.getElementById("loginRole");
   const emailField = document.getElementById("loginEmail");
   const passwordField = document.getElementById("loginPassword");
+
+  // Only show demo credentials when the server reports demo mode.
+  (async function checkDemoMode() {
+    try {
+      const config = await fetch(`${API_BASE}/config`).then((r) => r.json());
+      if (config.demoMode) {
+        const demoLink = document.getElementById("demoAccessLink");
+        const demoSection = document.getElementById("demoCredentialsSection");
+        if (demoLink) demoLink.style.display = "";
+        if (demoSection) demoSection.style.display = "";
+      }
+    } catch (_error) {
+      /* If config fetch fails, keep demo cards hidden — safe default. */
+    }
+  })();
 
   document.querySelectorAll("[data-demo-role]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -771,6 +893,27 @@ async function renderPage(page) {
       break;
     case "outing":
       await renderOutingPage();
+      break;
+    case "placement":
+      await renderPlacementPage();
+      break;
+    case "events":
+      await renderEventsPage();
+      break;
+    case "complaints":
+      await renderComplaintsPage();
+      break;
+    case "disciplinary":
+      await renderDisciplinaryPage();
+      break;
+    case "halltickets":
+      await renderHallTicketsPage();
+      break;
+    case "about":
+      await renderAboutPage();
+      break;
+    case "profile":
+      await renderProfilePage();
       break;
     default:
       document.getElementById("pageContent").innerHTML = emptyState("This page is not available.");
@@ -1042,114 +1185,6 @@ async function renderDashboardPage() {
   `;
 }
 
-async function renderStudentsPageLegacy() {
-  const pageContent = document.getElementById("pageContent");
-
-  if (STATE.user.role === "faculty") {
-    const { students } = await api("/students/assigned");
-    pageContent.innerHTML = `
-      ${createStatsGrid([
-        { label: "Assigned Students", value: String(students.length), helper: "Students under your guidance", icon: "students" },
-        { label: "Active Cohorts", value: String(new Set(students.map((item) => `${item.department_name}-${item.semester}`)).size), helper: "Distinct department-semester groups", icon: "timetable" },
-        { label: "Sections", value: String(new Set(students.map((item) => item.section)).size), helper: "Sections represented in your list", icon: "dashboard" },
-        { label: "Reachable Emails", value: String(students.length), helper: "Profiles with login access", icon: "materials" }
-      ])}
-      ${createTableCard({
-        title: "Assigned students",
-        subtitle: "Faculty-facing student roster",
-        headers: ["Student", "Roll Number", "Registration", "Department", "Semester"],
-        rows: students.map(
-          (student) => `
-            <tr>
-              <td><strong>${escapeHtml(student.full_name)}</strong><div class="muted-text">${escapeHtml(student.email)}</div></td>
-              <td>${escapeHtml(student.roll_number)}</td>
-              <td>${escapeHtml(student.registration_number)}</td>
-              <td>${escapeHtml(student.department_name)}</td>
-              <td>Semester ${escapeHtml(student.semester)} • Section ${escapeHtml(student.section)}</td>
-            </tr>
-          `
-        ),
-        emptyMessage: "No students are assigned to this faculty account yet."
-      })}
-    `;
-    return;
-  }
-
-  const [studentsData, facultyData] = await Promise.all([api("/students"), api("/faculty")]);
-
-  pageContent.innerHTML = `
-    <section class="section-grid two-column">
-      ${panel({
-        eyebrow: "Admin Action",
-        title: "Create student account",
-        body: `
-          <form id="studentCreateForm" class="form-grid">
-            <label class="field"><span>Full name</span><input type="text" name="fullName" placeholder="Student full name" required /></label>
-            <label class="field"><span>Email</span><input type="email" name="email" placeholder="student@college.edu" required /></label>
-            <label class="field"><span>Password</span><input type="password" name="password" placeholder="At least 8 characters" required /></label>
-            <label class="field"><span>Department</span><select name="departmentCode" required><option value="">Select department</option>${buildDepartmentOptions()}</select></label>
-            <label class="field"><span>Semester</span><select name="semester" required>${Array.from({ length: 8 }, (_, index) => `<option value="${index + 1}">Semester ${index + 1}</option>`).join("")}</select></label>
-            <label class="field"><span>Section</span><input type="text" name="section" placeholder="A" required /></label>
-            <label class="field"><span>Roll number</span><input type="text" name="rollNumber" placeholder="CSE2026-010" required /></label>
-            <label class="field"><span>Registration number</span><input type="text" name="registrationNumber" placeholder="REG2026-010" required /></label>
-            <label class="field full-width">
-              <span>Advisor faculty</span>
-              <select name="advisorFacultyId">
-                <option value="">Auto-assign first faculty in department</option>
-                ${facultyData.faculty.map((faculty) => `<option value="${faculty.id}">${escapeHtml(faculty.full_name)} • ${escapeHtml(faculty.department_name)}</option>`).join("")}
-              </select>
-            </label>
-            <button class="button button-primary full-width" type="submit">Create Student</button>
-          </form>
-        `
-      })}
-      ${panel({
-        eyebrow: "Overview",
-        title: "Student directory summary",
-        body: createStatsGrid([
-          { label: "Students", value: String(studentsData.students.length), helper: "Total active student records", icon: "students" },
-          { label: "Departments", value: String(new Set(studentsData.students.map((item) => item.department_name)).size), helper: "Represented academic departments", icon: "faculty" },
-          { label: "Sections", value: String(new Set(studentsData.students.map((item) => item.section)).size), helper: "Section distribution", icon: "dashboard" },
-          { label: "Advisors", value: String(new Set(studentsData.students.map((item) => item.advisor_name || "None")).size), helper: "Faculty advisor coverage", icon: "attendance" }
-        ])
-      })}
-    </section>
-    ${createTableCard({
-      title: "Student master list",
-      subtitle: "All student records available to the admin",
-      headers: ["Student", "Roll Number", "Registration", "Advisor", "Department"],
-      rows: studentsData.students.map(
-        (student) => `
-          <tr>
-            <td><strong>${escapeHtml(student.full_name)}</strong><div class="muted-text">${escapeHtml(student.email)}</div></td>
-            <td>${escapeHtml(student.roll_number)}</td>
-            <td>${escapeHtml(student.registration_number)}</td>
-            <td>${escapeHtml(student.advisor_name || "Not assigned")}</td>
-            <td>${escapeHtml(student.department_name)} • Semester ${escapeHtml(student.semester)}</td>
-          </tr>
-        `
-      ),
-      emptyMessage: "No students are available yet."
-    })}
-  `;
-
-  document.getElementById("studentCreateForm")?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-
-    try {
-      await api("/students", {
-        method: "POST",
-        body: JSON.stringify(Object.fromEntries(formData.entries()))
-      });
-      showToast("Student created successfully.");
-      await renderStudentsPage();
-    } catch (error) {
-      showToast(error.message, "error");
-    }
-  });
-}
-
 async function renderFacultyPage() {
   const pageContent = document.getElementById("pageContent");
   const [facultyData, academicData] = await Promise.all([api("/faculty"), api("/academics/overview")]);
@@ -1312,7 +1347,11 @@ async function renderAttendancePage() {
   const pageContent = document.getElementById("pageContent");
 
   if (STATE.user.role === "student") {
-    const [attendanceData, subjectsData] = await Promise.all([api("/attendance/my"), api("/students/me/courses")]);
+    const [attendanceData, subjectsData, timetableData] = await Promise.all([
+      api("/attendance/my"),
+      api("/students/me/courses"),
+      api("/students/me/timetable")
+    ]);
 
     const renderSubjectAttendance = (subjectId) => {
       const filtered =
@@ -1373,6 +1412,11 @@ async function renderAttendancePage() {
         ),
         emptyMessage: "No recent attendance logs available."
       })}
+      ${panel({
+        eyebrow: "Schedule",
+        title: "Your weekly timetable",
+        body: buildTimetableBoard(timetableData.timetable || [], "No classes are scheduled for your branch yet.")
+      })}
     `;
 
     document.getElementById("attendanceSubjectFilter")?.addEventListener("change", (event) => {
@@ -1387,11 +1431,14 @@ async function renderAttendancePage() {
     api(isAdmin ? "/students" : "/students/assigned")
   ]);
 
+  // Build department options from students AND courses (keyed by name — the
+  // student list carries department_name, not department_id). This ensures a
+  // branch/department that has students but no subjects yet still appears.
   const departmentOptions = [
-    ...new Map(
-      coursesData.courses.map((course) => [String(course.department_id), { id: course.department_id, name: course.department_name }])
-    ).values()
-  ];
+    ...new Set(
+      [...coursesData.courses, ...studentsData.students].map((row) => row.department_name).filter(Boolean)
+    )
+  ].map((name) => ({ id: name, name }));
 
   pageContent.innerHTML = `
     ${panel({
@@ -1447,17 +1494,23 @@ async function renderAttendancePage() {
 
   const getVisibleCourses = () =>
     coursesData.courses
-      .filter((course) => !isAdmin || !departmentSelect.value || String(course.department_id) === String(departmentSelect.value))
+      .filter((course) => !isAdmin || !departmentSelect.value || String(course.department_name) === String(departmentSelect.value))
       .filter((course) => !isAdmin || !branchSelect.value || String(course.branch_id) === String(branchSelect.value));
 
   const syncBranchOptions = () => {
     if (!isAdmin || !branchSelect) return;
 
+    const inDept = (deptName) => !departmentSelect.value || String(deptName) === String(departmentSelect.value);
+    // Union of branches from courses AND students, so branches that only have
+    // students (no subjects yet) are still selectable.
     const visibleBranches = [
       ...new Map(
-        coursesData.courses
-          .filter((course) => !departmentSelect.value || String(course.department_id) === String(departmentSelect.value))
-          .map((course) => [String(course.branch_id), { id: course.branch_id, name: course.branch_name }])
+        [
+          ...coursesData.courses.filter((course) => inDept(course.department_name)),
+          ...studentsData.students.filter((student) => inDept(student.department_name))
+        ]
+          .filter((row) => row.branch_id != null)
+          .map((row) => [String(row.branch_id), { id: row.branch_id, name: row.branch_name }])
       ).values()
     ];
 
@@ -1479,6 +1532,30 @@ async function renderAttendancePage() {
   const renderRoster = async () => {
     const selectedCourse = coursesData.courses.find((course) => String(course.id) === courseSelect.value);
     if (!selectedCourse) {
+      // A branch was chosen that has students but no subjects — explain the
+      // dead-end and the fix instead of a bare "choose a subject" prompt.
+      if (isAdmin && branchSelect.value && getVisibleCourses().length === 0) {
+        const waiting = studentsData.students.filter(
+          (student) => String(student.branch_id || "") === String(branchSelect.value)
+        );
+        if (waiting.length) {
+          const branchName = waiting[0].branch_name || "this branch";
+          const semesters = [...new Set(waiting.map((student) => Number(student.semester)))].sort((a, b) => a - b);
+          rosterRoot.innerHTML = `
+            <div class="empty-state" style="text-align: left;">
+              <strong>No subjects exist for ${escapeHtml(branchName)} yet.</strong>
+              <p class="muted-text" style="margin-top: 6px;">
+                ${waiting.length} student${waiting.length === 1 ? "" : "s"} in ${escapeHtml(branchName)}
+                (semester${semesters.length === 1 ? "" : "s"} ${semesters.join(", ")})
+                ${waiting.length === 1 ? "is" : "are"} waiting. Attendance is recorded per subject —
+                add a subject for this branch and semester under <strong>Academics</strong>,
+                then it will appear here to mark.
+              </p>
+            </div>`;
+          historyRoot.innerHTML = "";
+          return;
+        }
+      }
       rosterRoot.innerHTML = emptyState("Choose a subject to load the student roster.");
       historyRoot.innerHTML = "";
       return;
@@ -1798,401 +1875,6 @@ async function renderExamsPage() {
   });
 }
 
-async function renderFacultyPageLegacy() {
-  const pageContent = document.getElementById("pageContent");
-  const facultyData = await api("/faculty");
-
-  pageContent.innerHTML = `
-    <section class="section-grid two-column">
-      ${panel({
-        eyebrow: "Admin Action",
-        title: "Create faculty account",
-        body: `
-          <form id="facultyCreateForm" class="form-grid">
-            <label class="field"><span>Full name</span><input type="text" name="fullName" placeholder="Faculty full name" required /></label>
-            <label class="field"><span>Email</span><input type="email" name="email" placeholder="faculty@college.edu" required /></label>
-            <label class="field"><span>Password</span><input type="password" name="password" placeholder="At least 8 characters" required /></label>
-            <label class="field"><span>Department</span><select name="departmentCode" required><option value="">Select department</option>${buildDepartmentOptions()}</select></label>
-            <label class="field"><span>Designation</span><input type="text" name="designation" placeholder="Assistant Professor" required /></label>
-            <label class="field"><span>Employee code</span><input type="text" name="employeeCode" placeholder="FAC010" required /></label>
-            <button class="button button-primary full-width" type="submit">Create Faculty</button>
-          </form>
-        `
-      })}
-      ${panel({
-        eyebrow: "Overview",
-        title: "Faculty roster summary",
-        body: createStatsGrid([
-          { label: "Faculty", value: String(facultyData.faculty.length), helper: "Total faculty accounts", icon: "faculty" },
-          { label: "Departments", value: String(new Set(facultyData.faculty.map((item) => item.department_name)).size), helper: "Academic departments covered", icon: "students" },
-          { label: "Designations", value: String(new Set(facultyData.faculty.map((item) => item.designation)).size), helper: "Role diversity among faculty", icon: "dashboard" },
-          { label: "Mail IDs", value: String(facultyData.faculty.length), helper: "Reachable faculty accounts", icon: "materials" }
-        ])
-      })}
-    </section>
-    ${createTableCard({
-      title: "Faculty directory",
-      subtitle: "All faculty profiles visible to the admin",
-      headers: ["Faculty", "Employee Code", "Designation", "Department"],
-      rows: facultyData.faculty.map(
-        (faculty) => `
-          <tr>
-            <td><strong>${escapeHtml(faculty.full_name)}</strong><div class="muted-text">${escapeHtml(faculty.email)}</div></td>
-            <td>${escapeHtml(faculty.employee_code)}</td>
-            <td>${escapeHtml(faculty.designation)}</td>
-            <td>${escapeHtml(faculty.department_name)}</td>
-          </tr>
-        `
-      ),
-      emptyMessage: "No faculty records available."
-    })}
-  `;
-
-  document.getElementById("facultyCreateForm")?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-
-    try {
-      await api("/faculty", {
-        method: "POST",
-        body: JSON.stringify(Object.fromEntries(formData.entries()))
-      });
-      showToast("Faculty created successfully.");
-      await renderFacultyPage();
-    } catch (error) {
-      showToast(error.message, "error");
-    }
-  });
-}
-
-async function renderAttendancePageLegacy() {
-  const pageContent = document.getElementById("pageContent");
-
-  if (STATE.user.role === "student") {
-    const attendanceData = await api("/attendance/my");
-    pageContent.innerHTML = `
-      ${createStatsGrid([
-        { label: "Overall Attendance", value: `${attendanceData.summary.overallPercentage || 0}%`, helper: "Across all your courses", icon: "attendance" },
-        { label: "Courses Tracked", value: String(attendanceData.summary.byCourse.length), helper: "Course-level attendance records", icon: "timetable" },
-        { label: "Recent Logs", value: String(attendanceData.summary.recent.length), helper: "Latest attendance updates", icon: "dashboard" },
-        { label: "Eligible Courses", value: String(attendanceData.summary.byCourse.filter((item) => Number(item.percentage) >= 75).length), helper: "Courses above 75%", icon: "results" }
-      ])}
-      ${createTableCard({
-        title: "Attendance by course",
-        subtitle: "Percentage and class count for each course",
-        headers: ["Course", "Attended", "Total", "Percentage"],
-        rows: attendanceData.summary.byCourse.map(
-          (item) => `
-            <tr>
-              <td>${escapeHtml(item.course_name)} <div class="muted-text">${escapeHtml(item.course_code)}</div></td>
-              <td>${escapeHtml(item.attended_classes)}</td>
-              <td>${escapeHtml(item.total_classes)}</td>
-              <td>${statusBadge(`${item.percentage}%`)}</td>
-            </tr>
-          `
-        ),
-        emptyMessage: "No attendance records are available yet."
-      })}
-      ${createTableCard({
-        title: "Recent attendance log",
-        subtitle: "Most recent status updates from faculty",
-        headers: ["Date", "Course", "Status"],
-        rows: attendanceData.summary.recent.map(
-          (item) => `
-            <tr>
-              <td>${formatDate(item.date)}</td>
-              <td>${escapeHtml(item.course_name)} <div class="muted-text">${escapeHtml(item.course_code)}</div></td>
-              <td>${statusBadge(item.status)}</td>
-            </tr>
-          `
-        ),
-        emptyMessage: "No recent attendance logs available."
-      })}
-    `;
-    return;
-  }
-
-  const [coursesData, studentsData] = await Promise.all([api("/faculty/courses"), api("/faculty/assigned-students")]);
-
-  pageContent.innerHTML = `
-    <section class="section-grid two-column">
-      ${panel({
-        eyebrow: "Faculty Action",
-        title: "Mark attendance",
-        body: `
-          <form id="attendanceForm" class="stack-form">
-            <div class="form-grid">
-              <label class="field">
-                <span>Course</span>
-                <select name="courseId" id="attendanceCourse" required>
-                  <option value="">Select course</option>
-                  ${coursesData.courses.map((course) => `<option value="${course.id}">${escapeHtml(course.code)} • ${escapeHtml(course.name)}</option>`).join("")}
-                </select>
-              </label>
-              <label class="field">
-                <span>Date</span>
-                <input type="date" name="date" id="attendanceDate" required />
-              </label>
-            </div>
-            <div id="attendanceRoster">${emptyState("Choose a course to load the student roster.")}</div>
-            <button class="button button-primary" type="submit">Save Attendance</button>
-          </form>
-        `
-      })}
-      ${panel({
-        eyebrow: "Snapshot",
-        title: "Attendance operations",
-        body: createStatsGrid([
-          { label: "Courses", value: String(coursesData.courses.length), helper: "Available for attendance entry", icon: "timetable" },
-          { label: "Students", value: String(studentsData.students.length), helper: "Roster available to mark", icon: "students" },
-          { label: "Role", value: getRoleLabel(STATE.user.role), helper: "Permission scope on this page", icon: "dashboard" },
-          { label: "Tracking", value: "Daily", helper: "Attendance captured by date", icon: "attendance" }
-        ])
-      })}
-    </section>
-    <div id="attendanceHistory"></div>
-  `;
-
-  const courseSelect = document.getElementById("attendanceCourse");
-  const dateInput = document.getElementById("attendanceDate");
-  const rosterRoot = document.getElementById("attendanceRoster");
-  const historyRoot = document.getElementById("attendanceHistory");
-
-  dateInput.value = new Date().toISOString().slice(0, 10);
-
-  const renderRoster = async () => {
-    const selectedCourse = coursesData.courses.find((course) => String(course.id) === courseSelect.value);
-    if (!selectedCourse) {
-      rosterRoot.innerHTML = emptyState("Choose a course to load the student roster.");
-      historyRoot.innerHTML = "";
-      return;
-    }
-
-    const roster = studentsData.students.filter(
-      (student) => student.department_name === selectedCourse.department_name && Number(student.semester) === Number(selectedCourse.semester)
-    );
-
-    rosterRoot.innerHTML = roster.length
-      ? `
-          <section class="roster-card">
-            <div class="roster-header">
-              <div>
-                <h3 style="margin: 0;">${escapeHtml(selectedCourse.name)}</h3>
-                <p class="muted-text">${escapeHtml(selectedCourse.code)} • Semester ${escapeHtml(selectedCourse.semester)}</p>
-              </div>
-              ${statusBadge("ready")}
-            </div>
-            <div class="roster-grid">
-              ${roster
-                .map(
-                  (student) => `
-                    <div class="roster-item">
-                      <div>
-                        <strong>${escapeHtml(student.full_name)}</strong>
-                        <div class="muted-text">${escapeHtml(student.roll_number)} • Section ${escapeHtml(student.section)}</div>
-                      </div>
-                      <label class="field" style="margin: 0;">
-                        <span>Status</span>
-                        <select name="status-${student.id}" data-student-id="${student.id}">
-                          <option value="present">Present</option>
-                          <option value="late">Late</option>
-                          <option value="absent">Absent</option>
-                        </select>
-                      </label>
-                    </div>
-                  `
-                )
-                .join("")}
-            </div>
-          </section>
-        `
-      : emptyState("No students are mapped to this course yet.");
-
-    const history = await api(`/attendance/course/${selectedCourse.id}`);
-    historyRoot.innerHTML = createTableCard({
-      title: "Recent attendance history",
-      subtitle: `Past submissions for ${selectedCourse.code}`,
-      headers: ["Date", "Student", "Roll Number", "Status"],
-      rows: history.records.map(
-        (record) => `
-          <tr>
-            <td>${formatDate(record.date)}</td>
-            <td>${escapeHtml(record.full_name)}</td>
-            <td>${escapeHtml(record.roll_number)}</td>
-            <td>${statusBadge(record.status)}</td>
-          </tr>
-        `
-      ),
-      emptyMessage: "No attendance history found for this course."
-    });
-  };
-
-  courseSelect?.addEventListener("change", renderRoster);
-
-  document.getElementById("attendanceForm")?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const selectedCourse = coursesData.courses.find((course) => String(course.id) === courseSelect.value);
-    if (!selectedCourse) {
-      showToast("Please select a course first.", "error");
-      return;
-    }
-
-    const records = [...document.querySelectorAll("[data-student-id]")].map((field) => ({
-      studentId: Number(field.dataset.studentId),
-      status: field.value
-    }));
-
-    try {
-      await api("/attendance", {
-        method: "POST",
-        body: JSON.stringify({
-          courseId: Number(courseSelect.value),
-          date: dateInput.value,
-          records
-        })
-      });
-      showToast("Attendance saved successfully.");
-      await renderRoster();
-    } catch (error) {
-      showToast(error.message, "error");
-    }
-  });
-}
-
-async function renderExamsPageLegacy() {
-  const pageContent = document.getElementById("pageContent");
-
-  if (STATE.user.role === "student") {
-    const resultsData = await api("/results/my");
-    pageContent.innerHTML = `
-      ${createStatsGrid([
-        { label: "Published Results", value: String(resultsData.results.length), helper: "Exam records available", icon: "results" },
-        { label: "Top Grade", value: resultsData.results[0] ? resultsData.results[0].grade : "-", helper: "Most recent published grade", icon: "dashboard" },
-        { label: "Passed Courses", value: String(resultsData.results.filter((item) => item.grade !== "F").length), helper: "Courses above failing threshold", icon: "students" },
-        { label: "Assessments", value: String(new Set(resultsData.results.map((item) => item.exam_type)).size), helper: "Different exam categories", icon: "attendance" }
-      ])}
-      ${createTableCard({
-        title: "Published results",
-        subtitle: "Exam records available to the student",
-        headers: ["Course", "Exam", "Score", "Grade", "Published"],
-        rows: resultsData.results.map(
-          (result) => `
-            <tr>
-              <td>${escapeHtml(result.course_name)} <div class="muted-text">${escapeHtml(result.course_code)}</div></td>
-              <td>${escapeHtml(result.exam_type)}</td>
-              <td>${escapeHtml(result.marks_obtained)}/${escapeHtml(result.max_marks)}</td>
-              <td>${statusBadge(result.grade)}</td>
-              <td>${formatDateTime(result.published_at)}</td>
-            </tr>
-          `
-        ),
-        emptyMessage: "Results are not available yet."
-      })}
-    `;
-    return;
-  }
-
-  const [resultsData, coursesData, studentsData] = await Promise.all([api("/results"), api("/faculty/courses"), api("/faculty/assigned-students")]);
-
-  pageContent.innerHTML = `
-    <section class="section-grid two-column">
-      ${panel({
-        eyebrow: "Faculty Action",
-        title: "Publish result",
-        body: `
-          <form id="resultForm" class="form-grid">
-            <label class="field">
-              <span>Subject</span>
-              <select name="courseId" id="resultCourse" required>
-                <option value="">Select subject</option>
-                ${coursesData.courses.map((course) => `<option value="${course.id}">${escapeHtml(course.code)} • ${escapeHtml(course.name)}</option>`).join("")}
-              </select>
-            </label>
-            <label class="field">
-              <span>Student</span>
-              <select name="studentId" id="resultStudent" required><option value="">Select student</option></select>
-            </label>
-            <label class="field"><span>Exam type</span><input type="text" name="examType" placeholder="Mid Semester" required /></label>
-            <label class="field"><span>Marks obtained</span><input type="number" name="marksObtained" min="0" required /></label>
-            <label class="field"><span>Maximum marks</span><input type="number" name="maxMarks" min="1" required /></label>
-            <label class="field full-width"><span>Remarks</span><textarea name="remarks" placeholder="Optional performance notes"></textarea></label>
-            <button class="button button-primary full-width" type="submit">Publish Result</button>
-          </form>
-        `
-      })}
-      ${panel({
-        eyebrow: "Summary",
-        title: "Result publication",
-        body: createStatsGrid([
-          { label: "Results", value: String(resultsData.results.length), helper: "Published academic records", icon: "results" },
-          { label: "Courses", value: String(coursesData.courses.length), helper: "Courses available for grading", icon: "timetable" },
-          { label: "Students", value: String(studentsData.students.length), helper: "Student roster in scope", icon: "students" },
-          { label: "Role", value: getRoleLabel(STATE.user.role), helper: "Publishing permissions active", icon: "dashboard" }
-        ])
-      })}
-    </section>
-    ${createTableCard({
-      title: "Published results",
-      subtitle: "Latest result records for accessible courses",
-      headers: ["Student", "Course", "Exam", "Score", "Grade"],
-      rows: resultsData.results.map(
-        (result) => `
-          <tr>
-            <td>${escapeHtml(result.student_name)} <div class="muted-text">${escapeHtml(result.roll_number)}</div></td>
-            <td>${escapeHtml(result.course_name)} <div class="muted-text">${escapeHtml(result.course_code)}</div></td>
-            <td>${escapeHtml(result.exam_type)}</td>
-            <td>${escapeHtml(result.marks_obtained)}/${escapeHtml(result.max_marks)}</td>
-            <td>${statusBadge(result.grade)}</td>
-          </tr>
-        `
-      ),
-      emptyMessage: "No results have been published yet."
-    })}
-  `;
-
-  const courseSelect = document.getElementById("resultCourse");
-  const studentSelect = document.getElementById("resultStudent");
-
-  const populateStudents = () => {
-    const selectedCourse = coursesData.courses.find((course) => String(course.id) === courseSelect.value);
-    const filtered = selectedCourse
-      ? studentsData.students.filter(
-          (student) => student.department_name === selectedCourse.department_name && Number(student.semester) === Number(selectedCourse.semester)
-        )
-      : [];
-
-    studentSelect.innerHTML = filtered.length
-      ? filtered.map((student) => `<option value="${student.id}">${escapeHtml(student.full_name)} • ${escapeHtml(student.roll_number)}</option>`).join("")
-      : `<option value="">Select student</option>`;
-  };
-
-  courseSelect?.addEventListener("change", populateStudents);
-  populateStudents();
-
-  document.getElementById("resultForm")?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-
-    try {
-      await api("/results", {
-        method: "POST",
-        body: JSON.stringify({
-          studentId: Number(formData.get("studentId")),
-          courseId: Number(formData.get("courseId")),
-          examType: formData.get("examType"),
-          marksObtained: Number(formData.get("marksObtained")),
-          maxMarks: Number(formData.get("maxMarks")),
-          remarks: formData.get("remarks")
-        })
-      });
-      showToast("Result published successfully.");
-      await renderExamsPage();
-    } catch (error) {
-      showToast(error.message, "error");
-    }
-  });
-}
-
 const WEEK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 function buildSemesterOptions(selectedValue = "") {
@@ -2203,74 +1885,68 @@ function buildSemesterOptions(selectedValue = "") {
   }).join("");
 }
 
-function buildTimetableBoard(timetable, emptyMessage = "No classes scheduled for this day.") {
+// Compact, spreadsheet-style timetable: days across the top, time slots down the
+// side, one cell per day/slot — like an Excel grid.
+function buildTimetableBoard(timetable, emptyMessage = "No classes scheduled yet.") {
   const canManageTimetable = STATE.user?.role === "admin";
 
-  return `
-    <section class="schedule-grid">
-      ${WEEK_DAYS.map((day) => {
-        const entries = timetable.filter((item) => item.day_of_week === day);
-        return `
-          <article class="schedule-day-card">
-            <div class="split-row schedule-day-head">
-              <div class="panel-heading">
-                <h2>${escapeHtml(day)}</h2>
-              </div>
-              <div class="inline-actions">
-                <span class="muted-text">${entries.length} slot${entries.length === 1 ? "" : "s"}</span>
-                ${
-                  canManageTimetable && entries.length
-                    ? `<button class="button button-danger button-small" type="button" data-delete-day="${day}">Delete All</button>`
-                    : ""
-                }
-              </div>
-            </div>
-            ${
-              entries.length
-                ? `<div class="schedule-slot-list">
-                    ${entries
-                      .map((entry) => {
-                        const details = [
-                          entry.course_code,
-                          entry.faculty_name,
-                          entry.department_name,
-                          entry.room_no ? `Room ${entry.room_no}` : null
-                        ]
-                          .filter(Boolean)
-                          .map((item) => escapeHtml(item))
-                          .join(" / ");
+  if (!timetable.length) {
+    return `<div class="empty-inline">${escapeHtml(emptyMessage)}</div>`;
+  }
 
-                        return `
-                          <article class="schedule-slot">
-                            ${
-                              canManageTimetable
-                                ? `
-                                  <button
-                                    class="schedule-slot-delete"
-                                    type="button"
-                                    data-delete-slot="${entry.id}"
-                                    aria-label="Delete timetable slot"
-                                    title="Delete timetable slot"
-                                  >
-                                    ${icon("trash")}
-                                  </button>
-                                `
-                                : ""
-                            }
-                            <div class="schedule-slot-time">${escapeHtml(entry.start_time)} - ${escapeHtml(entry.end_time)}</div>
-                            <h3>${escapeHtml(entry.course_name)}</h3>
-                            <p>${details}</p>
-                          </article>
-                        `;
-                      })
-                      .join("")}
-                  </div>`
-                : `<div class="empty-inline">${escapeHtml(emptyMessage)}</div>`
+  // Distinct time slots (start/end), ordered by start time.
+  const slots = [
+    ...new Map(
+      timetable.map((entry) => [`${entry.start_time}-${entry.end_time}`, { start: entry.start_time, end: entry.end_time }])
+    ).values()
+  ].sort((a, b) => String(a.start).localeCompare(String(b.start)));
+
+  const cell = (day, slot) => {
+    const entries = timetable.filter(
+      (entry) => entry.day_of_week === day && entry.start_time === slot.start && entry.end_time === slot.end
+    );
+    if (!entries.length) {
+      return `<td class="tt-empty"></td>`;
+    }
+    return `<td class="tt-cell">${entries
+      .map(
+        (entry) => `
+          <div class="tt-entry">
+            <span class="tt-code">${escapeHtml(entry.course_code || entry.course_name)}</span>
+            ${entry.room_no ? `<span class="tt-room">${escapeHtml(entry.room_no)}</span>` : ""}
+            ${entry.faculty_name ? `<span class="tt-faculty">${escapeHtml(entry.faculty_name)}</span>` : ""}
+            ${
+              canManageTimetable
+                ? `<button class="tt-del" type="button" data-delete-slot="${entry.id}" title="Delete slot" aria-label="Delete slot">&times;</button>`
+                : ""
             }
-          </article>
-        `;
-      }).join("")}
-    </section>
+          </div>`
+      )
+      .join("")}</td>`;
+  };
+
+  return `
+    <div class="tt-wrap">
+      <table class="tt-grid">
+        <thead>
+          <tr>
+            <th class="tt-corner">Time</th>
+            ${WEEK_DAYS.map((day) => `<th>${escapeHtml(day.slice(0, 3))}</th>`).join("")}
+          </tr>
+        </thead>
+        <tbody>
+          ${slots
+            .map(
+              (slot) => `
+                <tr>
+                  <th class="tt-time">${escapeHtml(formatTime(slot.start))}<span class="tt-time-end">${escapeHtml(formatTime(slot.end))}</span></th>
+                  ${WEEK_DAYS.map((day) => cell(day, slot)).join("")}
+                </tr>`
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>
   `;
 }
 
@@ -2400,126 +2076,6 @@ async function fetchCurrentTimetableData() {
   }
 
   return api("/faculty/timetable");
-}
-
-async function renderTimetablePageLegacy() {
-  const pageContent = document.getElementById("pageContent");
-  const data = await fetchCurrentTimetableData();
-  const timetable = data.timetable;
-  const grouped = timetable.reduce((acc, item) => {
-    acc[item.day_of_week] = acc[item.day_of_week] || [];
-    acc[item.day_of_week].push(item);
-    return acc;
-  }, {});
-
-  pageContent.innerHTML = `
-    ${createStatsGrid([
-      { label: "Classes", value: String(timetable.length), helper: "Timetable entries available", icon: "timetable" },
-      { label: "Working Days", value: String(Object.keys(grouped).length), helper: "Days with scheduled sessions", icon: "attendance" },
-      { label: "Rooms", value: String(new Set(timetable.map((item) => item.room_no)).size), helper: "Rooms involved in the schedule", icon: "dashboard" },
-      { label: "Courses", value: String(new Set(timetable.map((item) => item.course_code)).size), helper: "Distinct scheduled courses", icon: "results" }
-    ])}
-    <section class="section-grid two-column">
-      ${Object.keys(grouped).length
-        ? Object.entries(grouped)
-            .map(
-              ([day, entries]) => `
-                <section class="panel">
-                  <div class="panel-heading">
-                    <span class="eyebrow">Weekly Plan</span>
-                    <h2>${escapeHtml(day)}</h2>
-                  </div>
-                  <div class="subtle-divider" style="margin: 18px 0;"></div>
-                  <div class="timeline">
-                    ${entries
-                      .map(
-                        (entry) => `
-                          <article class="timeline-item">
-                            <div class="meta-row">
-                              ${tag(`${entry.start_time} - ${entry.end_time}`)}
-                              ${statusBadge(entry.room_no)}
-                            </div>
-                            <h3>${escapeHtml(entry.course_name)}</h3>
-                            <p>${escapeHtml(entry.course_code)}${entry.faculty_name ? ` • ${escapeHtml(entry.faculty_name)}` : ""}</p>
-                          </article>
-                        `
-                      )
-                      .join("")}
-                  </div>
-                </section>
-              `
-            )
-            .join("")
-        : emptyState("No timetable entries available.")}
-    </section>
-  `;
-
-  bindTimetableAdminActions();
-}
-
-async function renderFeesPageLegacy() {
-  const pageContent = document.getElementById("pageContent");
-
-  if (STATE.user.role === "student") {
-    const feesData = await api("/students/me/fees");
-    const current = feesData.fees[0];
-
-    pageContent.innerHTML = `
-      ${createStatsGrid([
-        { label: "Current Status", value: current ? current.status.toUpperCase() : "N/A", helper: "Latest fee record status", icon: "fees" },
-        { label: "Total Amount", value: current ? formatCurrency(current.total_amount) : formatCurrency(0), helper: "Semester fee billed", icon: "dashboard" },
-        { label: "Paid", value: current ? formatCurrency(current.paid_amount) : formatCurrency(0), helper: "Amount already paid", icon: "results" },
-        { label: "Balance", value: current ? formatCurrency(current.balance) : formatCurrency(0), helper: "Amount still due", icon: "attendance" }
-      ])}
-      ${createTableCard({
-        title: "Fee history",
-        subtitle: "Student-facing fee record details",
-        headers: ["Semester", "Total", "Paid", "Balance", "Status", "Due Date"],
-        rows: feesData.fees.map(
-          (fee) => `
-            <tr>
-              <td>Semester ${escapeHtml(fee.semester)}</td>
-              <td>${formatCurrency(fee.total_amount)}</td>
-              <td>${formatCurrency(fee.paid_amount)}</td>
-              <td>${formatCurrency(fee.balance)}</td>
-              <td>${statusBadge(fee.status)}</td>
-              <td>${formatDate(fee.due_date)}</td>
-            </tr>
-          `
-        ),
-        emptyMessage: "No fee records found."
-      })}
-    `;
-    return;
-  }
-
-  const feesData = await api("/students/fees");
-  pageContent.innerHTML = `
-    ${createStatsGrid([
-      { label: "Fee Records", value: String(feesData.fees.length), helper: "Student fee entries on file", icon: "fees" },
-      { label: "Pending Balance", value: formatCurrency(feesData.fees.reduce((sum, fee) => sum + Number(fee.balance), 0)), helper: "Outstanding collection amount", icon: "dashboard" },
-      { label: "Paid Records", value: String(feesData.fees.filter((fee) => fee.status === "paid").length), helper: "Accounts with full settlement", icon: "results" },
-      { label: "Partial Records", value: String(feesData.fees.filter((fee) => fee.status === "partial").length), helper: "Accounts needing follow-up", icon: "attendance" }
-    ])}
-    ${createTableCard({
-      title: "Fee ledger",
-      subtitle: "Admin-wide view of fee records",
-      headers: ["Student", "Semester", "Total", "Balance", "Status", "Due Date"],
-      rows: feesData.fees.map(
-        (fee) => `
-          <tr>
-            <td>${escapeHtml(fee.full_name)} <div class="muted-text">${escapeHtml(fee.roll_number)}</div></td>
-            <td>Semester ${escapeHtml(fee.semester)}</td>
-            <td>${formatCurrency(fee.total_amount)}</td>
-            <td>${formatCurrency(fee.balance)}</td>
-            <td>${statusBadge(fee.status)}</td>
-            <td>${formatDate(fee.due_date)}</td>
-          </tr>
-        `
-      ),
-      emptyMessage: "No fee records available."
-    })}
-  `;
 }
 
 async function renderAssignmentsPage() {
@@ -2703,360 +2259,6 @@ async function renderAssignmentsPage() {
           ),
           emptyMessage: "No student submissions found for this assignment."
         });
-      } catch (error) {
-        showToast(error.message, "error");
-      }
-    });
-  });
-}
-
-async function renderNoticesPageLegacy() {
-  const pageContent = document.getElementById("pageContent");
-  const noticesData = await api("/notices");
-
-  pageContent.innerHTML = `
-    ${
-      STATE.user.role === "admin"
-        ? `
-          <section class="section-grid two-column">
-            ${panel({
-              eyebrow: "Admin Action",
-              title: "Publish notice",
-              body: `
-                <form id="noticeCreateForm" class="form-grid">
-                  <label class="field full-width"><span>Notice title</span><input type="text" name="title" placeholder="Academic or campus notice title" required /></label>
-                  <label class="field"><span>Audience</span><select name="audience" required><option value="all">All</option><option value="students">Students</option><option value="faculty">Faculty</option><option value="admins">Admins</option></select></label>
-                  <label class="field full-width"><span>Content</span><textarea name="content" placeholder="Write the notice details" required></textarea></label>
-                  <button class="button button-primary full-width" type="submit">Publish Notice</button>
-                </form>
-              `
-            })}
-            ${panel({
-              eyebrow: "Overview",
-              title: "Communication centre",
-              body: createStatsGrid([
-                { label: "Notices", value: String(noticesData.notices.length), helper: "Published notices visible to you", icon: "notices" },
-                { label: "All Audience", value: String(noticesData.notices.filter((item) => item.audience === "all").length), helper: "Institution-wide notices", icon: "students" },
-                { label: "Faculty Notices", value: String(noticesData.notices.filter((item) => item.audience === "faculty").length), helper: "Faculty-only updates", icon: "faculty" },
-                { label: "Student Notices", value: String(noticesData.notices.filter((item) => item.audience === "students").length), helper: "Student-only communication", icon: "dashboard" }
-              ])
-            })}
-          </section>
-        `
-        : ""
-    }
-    <section class="notice-list">
-      ${
-        noticesData.notices.length
-          ? noticesData.notices
-              .map(
-                (notice) => `
-                  <article class="notice-card">
-                    <div class="split-row">
-                      <div>
-                        <div class="meta-row">
-                          ${statusBadge(notice.audience)}
-                          <span class="muted-text">${formatDateTime(notice.posted_at)}</span>
-                        </div>
-                        <h3>${escapeHtml(notice.title)}</h3>
-                      </div>
-                      <span class="muted-text">${escapeHtml(notice.posted_by_name)}</span>
-                    </div>
-                    <p>${escapeHtml(notice.content)}</p>
-                  </article>
-                `
-              )
-              .join("")
-          : emptyState("No notices have been posted yet.")
-      }
-    </section>
-  `;
-
-  document.getElementById("noticeCreateForm")?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-
-    try {
-      await api("/notices", {
-        method: "POST",
-        body: JSON.stringify(Object.fromEntries(formData.entries()))
-      });
-      showToast("Notice published successfully.");
-      await renderNoticesPage();
-    } catch (error) {
-      showToast(error.message, "error");
-    }
-  });
-}
-
-async function renderMaterialsPageLegacy() {
-  const pageContent = document.getElementById("pageContent");
-  const materialsData = await api("/materials");
-
-  if (STATE.user.role === "student") {
-    pageContent.innerHTML = `
-      ${createStatsGrid([
-        { label: "Materials", value: String(materialsData.materials.length), helper: "Files available to download", icon: "materials" },
-        { label: "Courses", value: String(new Set(materialsData.materials.map((item) => item.course_code)).size), helper: "Courses with uploaded resources", icon: "timetable" },
-        { label: "Faculty Sources", value: String(new Set(materialsData.materials.map((item) => item.faculty_name)).size), helper: "Distinct uploaders", icon: "faculty" },
-        { label: "Latest Upload", value: materialsData.materials[0] ? formatDate(materialsData.materials[0].uploaded_at) : "-", helper: "Most recent uploaded material", icon: "dashboard" }
-      ])}
-      ${createTableCard({
-        title: "Material library",
-        subtitle: "Faculty-uploaded course materials ready to download",
-        headers: ["Title", "Course", "Faculty", "Uploaded", "Download"],
-        rows: materialsData.materials.map(
-          (material) => `
-            <tr>
-              <td><strong>${escapeHtml(material.title)}</strong><div class="muted-text">${escapeHtml(material.description)}</div></td>
-              <td>${escapeHtml(material.course_code)}</td>
-              <td>${escapeHtml(material.faculty_name || "Faculty")}</td>
-              <td>${formatDateTime(material.uploaded_at)}</td>
-              <td><a class="button button-secondary button-small" href="${normalizeAssetUrl(material.downloadUrl)}" target="_blank" rel="noreferrer">Download</a></td>
-            </tr>
-          `
-        ),
-        emptyMessage: "No materials are available yet."
-      })}
-    `;
-    return;
-  }
-
-  const coursesData = await api("/faculty/courses");
-
-  pageContent.innerHTML = `
-    <section class="section-grid two-column">
-      ${panel({
-        eyebrow: "Faculty Action",
-        title: "Upload material",
-        body: `
-          <form id="materialCreateForm" class="form-grid">
-            <label class="field">
-              <span>Course</span>
-              <select name="courseId" required>
-                <option value="">Select course</option>
-                ${coursesData.courses.map((course) => `<option value="${course.id}">${escapeHtml(course.code)} • ${escapeHtml(course.name)}</option>`).join("")}
-              </select>
-            </label>
-            <label class="field full-width"><span>Title</span><input type="text" name="title" placeholder="Material title" required /></label>
-            <label class="field full-width"><span>Description</span><textarea name="description" placeholder="What does this file help students with?" required></textarea></label>
-            <label class="field full-width"><span>File</span><input type="file" name="file" required /></label>
-            <button class="button button-primary full-width" type="submit">Upload Material</button>
-          </form>
-        `
-      })}
-      ${panel({
-        eyebrow: "Overview",
-        title: "Resource distribution",
-        body: createStatsGrid([
-          { label: "Materials", value: String(materialsData.materials.length), helper: "Uploaded resource files", icon: "materials" },
-          { label: "Courses", value: String(coursesData.courses.length), helper: "Courses ready for upload", icon: "timetable" },
-          { label: "Downloads", value: "Live", helper: "Files served directly from the backend", icon: "students" },
-          { label: "Latest Upload", value: materialsData.materials[0] ? formatDate(materialsData.materials[0].uploaded_at) : "-", helper: "Most recent upload date", icon: "dashboard" }
-        ])
-      })}
-    </section>
-    ${createTableCard({
-      title: "Uploaded materials",
-      subtitle: "All materials accessible to this role",
-      headers: ["Title", "Course", "Uploaded", "Download"],
-      rows: materialsData.materials.map(
-        (material) => `
-          <tr>
-            <td><strong>${escapeHtml(material.title)}</strong><div class="muted-text">${escapeHtml(material.description)}</div></td>
-            <td>${escapeHtml(material.course_code)}</td>
-            <td>${formatDateTime(material.uploaded_at)}</td>
-            <td><a class="button button-secondary button-small" href="${normalizeAssetUrl(material.downloadUrl)}" target="_blank" rel="noreferrer">Open</a></td>
-          </tr>
-        `
-      ),
-      emptyMessage: "No materials uploaded yet."
-    })}
-  `;
-
-  document.getElementById("materialCreateForm")?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-
-    try {
-      await api("/materials", {
-        method: "POST",
-        body: formData
-      });
-      showToast("Material uploaded successfully.");
-      await renderMaterialsPage();
-    } catch (error) {
-      showToast(error.message, "error");
-    }
-  });
-}
-
-async function renderOutingPageLegacy() {
-  const pageContent = document.getElementById("pageContent");
-
-  if (STATE.user.role === "student") {
-    const outingData = await api("/outing/my");
-    const pendingRequests = outingData.requests.filter((item) => item.status === "pending");
-    const approvedRequests = outingData.requests.filter((item) => item.status === "approved");
-    const rejectedRequests = outingData.requests.filter((item) => item.status === "rejected");
-    pageContent.innerHTML = `
-      <section class="section-grid two-column">
-        ${panel({
-          eyebrow: "Student Action",
-          title: "Request outing approval",
-          body: `
-            <form id="outingCreateForm" class="form-grid">
-              <label class="field full-width"><span>Purpose</span><input type="text" name="purpose" placeholder="Reason for the outing request" required /></label>
-              <label class="field"><span>Destination</span><input type="text" name="destination" placeholder="Destination" required /></label>
-              <label class="field"><span>Outing date</span><input type="date" name="outingDate" required /></label>
-              <label class="field"><span>Return date</span><input type="date" name="returnDate" required /></label>
-              <button class="button button-primary full-width" type="submit">Submit Request</button>
-            </form>
-          `
-        })}
-        ${panel({
-          eyebrow: "Overview",
-          title: "Request tracker",
-          body: createStatsGrid([
-            { label: "Requests", value: String(outingData.requests.length), helper: "Total requests submitted", icon: "outing" },
-            { label: "Pending", value: String(pendingRequests.length), helper: "Requests awaiting review", icon: "attendance" },
-            { label: "Approved", value: String(approvedRequests.length), helper: "Requests approved so far", icon: "results" },
-            { label: "Rejected", value: String(rejectedRequests.length), helper: "Requests rejected", icon: "dashboard" }
-          ])
-        })}
-      </section>
-      ${createTableCard({
-        title: "Pending requests",
-        headers: ["Purpose", "Destination", "Dates", "Status", "Comment"],
-        rows: pendingRequests.map(
-          (request) => `
-            <tr>
-              <td>${escapeHtml(request.purpose)}</td>
-              <td>${escapeHtml(request.destination)}</td>
-              <td>${formatDate(request.outing_date)} to ${formatDate(request.return_date)}</td>
-              <td>${statusBadge(request.status)}</td>
-              <td>${escapeHtml(request.faculty_comment || "No comments yet")}</td>
-            </tr>
-          `
-        ),
-        emptyMessage: "No pending outing requests."
-      })}
-      ${createTableCard({
-        title: "Approved requests",
-        headers: ["Purpose", "Destination", "Dates", "Status", "Comment"],
-        rows: approvedRequests.map(
-          (request) => `
-            <tr>
-              <td>${escapeHtml(request.purpose)}</td>
-              <td>${escapeHtml(request.destination)}</td>
-              <td>${formatDate(request.outing_date)} to ${formatDate(request.return_date)}</td>
-              <td>${statusBadge(request.status)}</td>
-              <td>${escapeHtml(request.faculty_comment || "Approved")}</td>
-            </tr>
-          `
-        ),
-        emptyMessage: "No approved outing requests yet."
-      })}
-      ${createTableCard({
-        title: "Rejected requests",
-        headers: ["Purpose", "Destination", "Dates", "Status", "Comment"],
-        rows: rejectedRequests.map(
-          (request) => `
-            <tr>
-              <td>${escapeHtml(request.purpose)}</td>
-              <td>${escapeHtml(request.destination)}</td>
-              <td>${formatDate(request.outing_date)} to ${formatDate(request.return_date)}</td>
-              <td>${statusBadge(request.status)}</td>
-              <td>${escapeHtml(request.faculty_comment || "No comments yet")}</td>
-            </tr>
-          `
-        ),
-        emptyMessage: "No rejected outing requests."
-      })}
-    `;
-
-    document.getElementById("outingCreateForm")?.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const formData = new FormData(event.currentTarget);
-
-      try {
-        await api("/outing", {
-          method: "POST",
-          body: JSON.stringify(Object.fromEntries(formData.entries()))
-        });
-        showToast("Outing request submitted successfully.");
-        await renderOutingPage();
-      } catch (error) {
-        showToast(error.message, "error");
-      }
-    });
-    return;
-  }
-
-  const outingData = await api("/outing");
-  const pendingRequests = outingData.requests.filter((item) => item.status === "pending");
-  const approvedRequests = outingData.requests.filter((item) => item.status === "approved");
-  const rejectedRequests = outingData.requests.filter((item) => item.status === "rejected");
-  pageContent.innerHTML = `
-    ${createStatsGrid([
-      { label: "Requests", value: String(outingData.requests.length), helper: "Requests visible to your role", icon: "outing" },
-      { label: "Pending", value: String(pendingRequests.length), helper: "Awaiting your review", icon: "attendance" },
-      { label: "Approved", value: String(approvedRequests.length), helper: "Requests approved", icon: "results" },
-      { label: "Rejected", value: String(rejectedRequests.length), helper: "Requests declined", icon: "dashboard" }
-    ])}
-    <section class="outing-grid">
-      ${
-        outingData.requests.length
-          ? outingData.requests
-              .map(
-                (request) => `
-                  <article class="outing-card">
-                    <div class="split-row">
-                      <div>
-                        <div class="meta-row">
-                          ${statusBadge(request.status)}
-                          ${tag(request.roll_number)}
-                        </div>
-                        <h3 style="margin: 12px 0 8px;">${escapeHtml(request.student_name)}</h3>
-                        <p>${escapeHtml(request.purpose)} • ${escapeHtml(request.destination)}</p>
-                      </div>
-                      <div class="muted-text">${formatDate(request.outing_date)} to ${formatDate(request.return_date)}</div>
-                    </div>
-                    <form class="compact-form" data-outing-review="${request.id}">
-                      <label class="field">
-                        <span>Reviewer comment</span>
-                        <textarea name="facultyComment" placeholder="Optional comment for the student">${escapeHtml(request.faculty_comment || "")}</textarea>
-                      </label>
-                      <div class="inline-actions">
-                        <button class="button button-primary button-small" type="submit" name="status" value="approved">Approve</button>
-                        <button class="button button-danger button-small" type="submit" name="status" value="rejected">Reject</button>
-                      </div>
-                    </form>
-                  </article>
-                `
-              )
-              .join("")
-          : emptyState("No outing requests require review right now.")
-      }
-    </section>
-  `;
-
-  document.querySelectorAll("[data-outing-review]").forEach((form) => {
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const button = event.submitter;
-      const formData = new FormData(event.currentTarget);
-
-      try {
-        await api(`/outing/${event.currentTarget.dataset.outingReview}`, {
-          method: "PUT",
-          body: JSON.stringify({
-            status: button.value,
-            facultyComment: formData.get("facultyComment")
-          })
-        });
-        showToast(`Outing request ${button.value}.`);
-        await renderOutingPage();
       } catch (error) {
         showToast(error.message, "error");
       }
@@ -4439,3 +3641,1129 @@ async function renderStudentsPage() {
     });
   });
 }
+
+// ===========================================================================
+// Placement Preparation
+// ===========================================================================
+async function renderPlacementPage() {
+  if (STATE.user.role === "student") {
+    await renderPlacementHome();
+  } else {
+    await renderPlacementAdmin();
+  }
+}
+
+function buildPlacementFeedbackPanel(feedback) {
+  const weak = feedback.weakAreas.length
+    ? `
+        <div class="feedback-block">
+          <h4 style="margin: 0 0 10px;">Focus areas to improve</h4>
+          <ul class="feedback-list">
+            ${feedback.weakAreas
+              .map(
+                (area) =>
+                  `<li><strong>${escapeHtml(area.topic)} — ${area.accuracy}%</strong><br>${escapeHtml(area.tip)}</li>`
+              )
+              .join("")}
+          </ul>
+        </div>
+      `
+    : `<p class="muted-text">No weak areas detected. Excellent work — keep practising to stay sharp.</p>`;
+
+  const strong = feedback.strengths.length
+    ? `
+        <div class="feedback-block" style="margin-top: 18px;">
+          <h4 style="margin: 0 0 10px;">Your strengths</h4>
+          <ul class="feedback-list">
+            ${feedback.strengths
+              .map((area) => `<li><strong>${escapeHtml(area.topic)} — ${area.accuracy}%</strong></li>`)
+              .join("")}
+          </ul>
+        </div>
+      `
+    : "";
+
+  return panel({ eyebrow: "Knowledge base", title: "Personalized feedback", body: weak + strong });
+}
+
+async function renderPlacementHome() {
+  const pageContent = document.getElementById("pageContent");
+  const overview = await api("/placement/overview");
+  const totalAvailable = overview.categories.reduce((sum, item) => sum + item.questionCount, 0);
+  const feedback = overview.feedback;
+  const hasAttempts = overview.summary.answered > 0;
+
+  const categoryOptions = ['<option value="">All categories</option>']
+    .concat(
+      overview.categories.map(
+        (item) =>
+          `<option value="${escapeHtml(item.category)}">${escapeHtml(item.category)} (${item.questionCount})</option>`
+      )
+    )
+    .join("");
+
+  const difficultyOptions = ['<option value="">All levels</option>']
+    .concat(
+      overview.difficulties.map(
+        (level) => `<option value="${level}">${level.charAt(0).toUpperCase() + level.slice(1)}</option>`
+      )
+    )
+    .join("");
+
+  pageContent.innerHTML = `
+    ${createStatsGrid([
+      { label: "Readiness", value: hasAttempts ? `${feedback.readiness.score}%` : "—", icon: "placement" },
+      { label: "Questions answered", value: String(overview.summary.answered), icon: "assignments" },
+      { label: "Accuracy", value: hasAttempts ? `${overview.summary.accuracy}%` : "—", icon: "results" },
+      { label: "Question bank", value: String(totalAvailable), icon: "materials" }
+    ])}
+    <section class="section-grid two-column">
+      ${panel({
+        eyebrow: "Practice",
+        title: "Start a practice quiz",
+        body: `
+          <form id="placementQuizForm" class="form-grid">
+            <label class="field"><span>Category</span><select name="category">${categoryOptions}</select></label>
+            <label class="field"><span>Difficulty</span><select name="difficulty">${difficultyOptions}</select></label>
+            <label class="field"><span>Number of questions</span><select name="limit"><option value="5">5 questions</option><option value="10">10 questions</option><option value="15">15 questions</option></select></label>
+            <button class="button button-primary full-width" type="submit">Start Quiz</button>
+          </form>
+          <p class="muted-text" style="margin-top: 12px;">Every wrong answer comes with a full explanation, and you'll get topic-by-topic feedback after each quiz.</p>
+        `
+      })}
+      ${panel({
+        eyebrow: "Readiness",
+        title: feedback.readiness.label,
+        body: hasAttempts
+          ? `
+              <p class="muted-text">Overall accuracy across ${overview.summary.answered} answered question(s).</p>
+              ${
+                feedback.recommendations.length
+                  ? `<h4 style="margin: 14px 0 8px;">Recommended focus</h4>
+                     <ul class="reco-list">${feedback.recommendations
+                       .map((item) => `<li>${escapeHtml(item)}</li>`)
+                       .join("")}</ul>`
+                  : `<p>Great work — no weak topics detected yet. Keep going to stay placement-ready.</p>`
+              }
+            `
+          : `<p>Take your first quiz to unlock a personalized readiness score and topic-by-topic feedback.</p>`
+      })}
+    </section>
+    ${hasAttempts ? buildPlacementFeedbackPanel(feedback) : ""}
+    ${
+      hasAttempts
+        ? createTableCard({
+            title: "Topic-wise performance",
+            subtitle: "Where you stand across every topic you have attempted",
+            headers: ["Topic", "Answered", "Correct", "Accuracy"],
+            rows: overview.topicBreakdown.map(
+              (item) => `
+                <tr>
+                  <td>${escapeHtml(item.topic)}</td>
+                  <td>${item.answered}</td>
+                  <td>${item.correct}</td>
+                  <td>${statusBadge(item.accuracy >= 80 ? "Strong" : item.accuracy >= 60 ? "Fair" : "Weak")} ${item.accuracy}%</td>
+                </tr>
+              `
+            ),
+            emptyMessage: "No attempts yet."
+          })
+        : ""
+    }
+  `;
+
+  document.getElementById("placementQuizForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    await startPlacementQuiz({
+      category: formData.get("category") || "",
+      difficulty: formData.get("difficulty") || "",
+      limit: formData.get("limit") || "5"
+    });
+  });
+}
+
+async function startPlacementQuiz(filters) {
+  const pageContent = document.getElementById("pageContent");
+  const params = new URLSearchParams();
+  if (filters.category) params.set("category", filters.category);
+  if (filters.difficulty) params.set("difficulty", filters.difficulty);
+  if (filters.limit) params.set("limit", filters.limit);
+
+  let data;
+  try {
+    data = await api(`/placement/quiz?${params.toString()}`);
+  } catch (error) {
+    showToast(error.message, "error");
+    return;
+  }
+
+  if (!data.questions.length) {
+    pageContent.innerHTML = panel({
+      title: "No questions found",
+      body: `<p class="muted-text">No questions match those filters yet. Try a different category or difficulty level.</p>
+             <button class="button button-secondary" id="placementBack" type="button">Back to Overview</button>`
+    });
+    document.getElementById("placementBack")?.addEventListener("click", renderPlacementPage);
+    return;
+  }
+
+  renderPlacementQuiz(data.questions);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function renderPlacementQuiz(questions) {
+  const pageContent = document.getElementById("pageContent");
+
+  pageContent.innerHTML = panel({
+    eyebrow: "Practice quiz",
+    title: `Answer all ${questions.length} question(s)`,
+    actions: `<button class="button button-secondary button-small" id="placementCancel" type="button">Cancel</button>`,
+    body: `
+      <form id="placementQuiz">
+        ${questions
+          .map(
+            (question, index) => `
+              <article class="quiz-question" data-question-id="${question.id}">
+                <div class="quiz-question-head">
+                  <span class="quiz-index">Q${index + 1}</span>
+                  <div class="meta-row">${tag(question.category)} ${tag(question.topic)} ${tag(question.difficulty)}</div>
+                </div>
+                <p class="quiz-text">${escapeHtml(question.question)}</p>
+                <div class="quiz-options">
+                  ${["A", "B", "C", "D"]
+                    .map(
+                      (letter) => `
+                        <label class="quiz-option">
+                          <input type="radio" name="q-${question.id}" value="${letter}" />
+                          <span class="opt-key">${letter}</span>
+                          <span class="opt-text">${escapeHtml(question.options[letter])}</span>
+                        </label>
+                      `
+                    )
+                    .join("")}
+                </div>
+              </article>
+            `
+          )
+          .join("")}
+        <button class="button button-primary full-width" type="submit">Submit Answers</button>
+      </form>
+    `
+  });
+
+  document.getElementById("placementCancel")?.addEventListener("click", renderPlacementPage);
+
+  document.getElementById("placementQuiz")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const answers = [];
+    let unanswered = 0;
+
+    form.querySelectorAll(".quiz-question").forEach((block) => {
+      block.classList.remove("needs-answer");
+      const checked = block.querySelector("input[type=radio]:checked");
+      if (!checked) {
+        unanswered += 1;
+        block.classList.add("needs-answer");
+      } else {
+        answers.push({ questionId: Number(block.dataset.questionId), selectedOption: checked.value });
+      }
+    });
+
+    if (unanswered > 0) {
+      showToast(`Please answer all questions — ${unanswered} left.`, "error");
+      return;
+    }
+
+    const submitButton = form.querySelector("button[type=submit]");
+    submitButton.disabled = true;
+
+    try {
+      const result = await api("/placement/submit", {
+        method: "POST",
+        body: JSON.stringify({ answers })
+      });
+      renderPlacementResults(result);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      submitButton.disabled = false;
+      showToast(error.message, "error");
+    }
+  });
+}
+
+function renderPlacementResults(result) {
+  const pageContent = document.getElementById("pageContent");
+  const { score, results, feedback } = result;
+
+  pageContent.innerHTML = `
+    ${createStatsGrid([
+      { label: "Score", value: `${score.correct}/${score.total}`, icon: "results" },
+      { label: "Accuracy", value: `${score.accuracy}%`, icon: "placement" },
+      { label: "Correct", value: String(score.correct), icon: "assignments" },
+      { label: "To review", value: String(score.incorrect), icon: "notices" }
+    ])}
+    ${buildPlacementFeedbackPanel(feedback)}
+    ${panel({
+      eyebrow: "Review",
+      title: "Answer review with explanations",
+      actions: `
+        <div class="inline-actions">
+          <button class="button button-secondary button-small" id="placementNew" type="button">New Quiz</button>
+          <button class="button button-primary button-small" id="placementHome" type="button">Back to Overview</button>
+        </div>
+      `,
+      body: results
+        .map(
+          (item) => `
+            <article class="result-card ${item.isCorrect ? "correct" : "incorrect"}">
+              <div class="quiz-question-head">
+                <span class="result-icon ${item.isCorrect ? "correct" : "incorrect"}">${item.isCorrect ? "✓" : "✗"}</span>
+                <div class="meta-row">${tag(item.topic)} ${tag(item.difficulty)} ${statusBadge(item.isCorrect ? "Correct" : "Incorrect")}</div>
+              </div>
+              <p class="quiz-text">${escapeHtml(item.question)}</p>
+              <ul class="result-options">
+                <li class="opt ${item.isCorrect ? "right" : "wrong"}">Your answer: ${item.yourOption}. ${escapeHtml(item.yourAnswer)}</li>
+                ${
+                  item.isCorrect
+                    ? ""
+                    : `<li class="opt right">Correct answer: ${item.correctOption}. ${escapeHtml(item.correctAnswer)}</li>`
+                }
+              </ul>
+              <div class="explanation"><strong>Why this answer?</strong>${escapeHtml(item.explanation)}</div>
+            </article>
+          `
+        )
+        .join("")
+    })}
+  `;
+
+  document.getElementById("placementHome")?.addEventListener("click", renderPlacementPage);
+  document.getElementById("placementNew")?.addEventListener("click", renderPlacementPage);
+}
+
+async function renderPlacementAdmin() {
+  const pageContent = document.getElementById("pageContent");
+  const [analytics, bank] = await Promise.all([api("/placement/analytics"), api("/placement/questions")]);
+  const canDelete = STATE.user.role === "admin";
+
+  pageContent.innerHTML = `
+    ${createStatsGrid([
+      { label: "Questions", value: String(analytics.totalQuestions), icon: "materials" },
+      { label: "Total attempts", value: String(analytics.totalAttempts), icon: "assignments" },
+      { label: "Active students", value: String(analytics.activeStudents), icon: "students" },
+      { label: "Cohort accuracy", value: analytics.totalAttempts ? `${analytics.overallAccuracy}%` : "—", icon: "results" }
+    ])}
+    <section class="section-grid two-column">
+      ${panel({
+        eyebrow: "Question bank",
+        title: "Add a placement question",
+        body: `
+          <form id="placementAddForm" class="form-grid">
+            <label class="field"><span>Category</span><input name="category" required placeholder="e.g. Quantitative Aptitude" /></label>
+            <label class="field"><span>Topic</span><input name="topic" required placeholder="e.g. Percentages" /></label>
+            <label class="field"><span>Difficulty</span><select name="difficulty"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></label>
+            <label class="field"><span>Correct option</span><select name="correctOption"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></label>
+            <label class="field full-width"><span>Question</span><textarea name="question" required placeholder="Question text"></textarea></label>
+            <label class="field"><span>Option A</span><input name="optionA" required /></label>
+            <label class="field"><span>Option B</span><input name="optionB" required /></label>
+            <label class="field"><span>Option C</span><input name="optionC" required /></label>
+            <label class="field"><span>Option D</span><input name="optionD" required /></label>
+            <label class="field full-width"><span>Explanation</span><textarea name="explanation" required placeholder="Why the correct option is right"></textarea></label>
+            <button class="button button-primary full-width" type="submit">Add Question</button>
+          </form>
+        `
+      })}
+      ${panel({
+        eyebrow: "Analytics",
+        title: "Cohort weak spots",
+        body: analytics.weakestTopics.length
+          ? `<ul class="feedback-list">${analytics.weakestTopics
+              .map(
+                (topic) =>
+                  `<li><strong>${escapeHtml(topic.topic)} — ${topic.accuracy}%</strong> across ${topic.answered} attempt(s)</li>`
+              )
+              .join("")}</ul>`
+          : `<p class="muted-text">No student attempts recorded yet.</p>`
+      })}
+    </section>
+    ${createTableCard({
+      title: "Question bank",
+      subtitle: `${bank.count} questions`,
+      headers: canDelete
+        ? ["Category", "Topic", "Level", "Question", "Answer", "Action"]
+        : ["Category", "Topic", "Level", "Question", "Answer"],
+      rows: bank.questions.map(
+        (question) => `
+          <tr>
+            <td>${escapeHtml(question.category)}</td>
+            <td>${escapeHtml(question.topic)}</td>
+            <td>${escapeHtml(question.difficulty)}</td>
+            <td>${escapeHtml(question.question)}</td>
+            <td>${question.correct_option}</td>
+            ${
+              canDelete
+                ? `<td><button class="button button-danger button-small" data-delete-question="${question.id}" type="button">Delete</button></td>`
+                : ""
+            }
+          </tr>
+        `
+      ),
+      emptyMessage: "No questions in the bank yet."
+    })}
+  `;
+
+  document.getElementById("placementAddForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    try {
+      await api("/placement/questions", {
+        method: "POST",
+        body: JSON.stringify(Object.fromEntries(formData.entries()))
+      });
+      showToast("Question added to the bank.");
+      await renderPlacementAdmin();
+    } catch (error) {
+      showToast(error.message, "error");
+    }
+  });
+
+  document.querySelectorAll("[data-delete-question]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      try {
+        await api(`/placement/questions/${button.dataset.deleteQuestion}`, { method: "DELETE" });
+        button.closest("tr")?.remove();
+        showToast("Question deleted.");
+      } catch (error) {
+        button.disabled = false;
+        showToast(error.message, "error");
+      }
+    });
+  });
+}
+
+// ===========================================================================
+// Shared helpers for community features
+// ===========================================================================
+function formatTime(value) {
+  if (!value) return "";
+  const [h, m] = String(value).split(":");
+  const hour = Number(h);
+  if (Number.isNaN(hour)) return String(value);
+  const period = hour >= 12 ? "PM" : "AM";
+  const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+  return `${hour12}:${m || "00"} ${period}`;
+}
+
+function initials(name) {
+  const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+  return (parts.slice(0, 2).map((word) => word[0]).join("") || "?").toUpperCase();
+}
+
+async function fetchSelectableStudents() {
+  if (STATE.user.role === "admin") return (await api("/students")).students;
+  if (STATE.user.role === "faculty") return (await api("/students/assigned")).students;
+  return [];
+}
+
+function studentOptions(students) {
+  return students
+    .map((s) => `<option value="${s.id}">${escapeHtml(s.full_name)} (${escapeHtml(s.roll_number)})</option>`)
+    .join("");
+}
+
+// ===========================================================================
+// Events
+// ===========================================================================
+async function renderEventsPage() {
+  const pageContent = document.getElementById("pageContent");
+  const canManage = STATE.user.role === "admin" || STATE.user.role === "faculty";
+  const canDelete = STATE.user.role === "admin";
+  const data = await api("/events");
+  const today = new Date().toISOString().slice(0, 10);
+  const upcoming = data.events.filter((e) => e.event_date >= today);
+  const past = data.events.filter((e) => e.event_date < today);
+
+  const eventCard = (e) => `
+    <article class="event-card${e.event_date < today ? " is-past" : ""}">
+      <div class="event-body">
+        <div class="meta-row">${statusBadge(e.category)}${e.event_time ? " " + tag(formatTime(e.event_time)) : ""}${e.venue ? " " + tag(e.venue) : ""}</div>
+        <h3>${escapeHtml(e.title)}</h3>
+        <p>${escapeHtml(e.description)}</p>
+        <div class="muted-text">${formatDate(e.event_date)}${e.created_by_name ? " &middot; " + escapeHtml(e.created_by_name) : ""}</div>
+        ${
+          canManage
+            ? `<div class="inline-actions">
+                 <button class="button button-ghost button-small" type="button" data-event-edit="${e.id}">Edit</button>
+                 ${canDelete ? `<button class="button button-danger button-small" type="button" data-event-delete="${e.id}">Delete</button>` : ""}
+               </div>`
+            : ""
+        }
+      </div>
+    </article>`;
+
+  const categoryOptions = ["academic", "cultural", "sports", "placement", "general"]
+    .map((c) => `<option value="${c}">${c.charAt(0).toUpperCase() + c.slice(1)}</option>`)
+    .join("");
+
+  pageContent.innerHTML = `
+    ${createStatsGrid([
+      { label: "Upcoming", value: String(upcoming.length), icon: "events" },
+      { label: "Total events", value: String(data.events.length), icon: "notices" },
+      { label: "This month", value: String(upcoming.filter((e) => e.event_date.slice(0, 7) === today.slice(0, 7)).length), icon: "attendance" },
+      { label: "Past", value: String(past.length), icon: "dashboard" }
+    ])}
+    ${
+      canManage
+        ? panel({
+            eyebrow: "Manage",
+            title: "Create an event",
+            body: `
+              <form id="eventForm" class="form-grid">
+                <input type="hidden" name="eventId" value="" />
+                <label class="field full-width"><span>Title</span><input name="title" required placeholder="Event title" /></label>
+                <label class="field"><span>Category</span><select name="category">${categoryOptions}</select></label>
+                <label class="field"><span>Date</span><input type="date" name="eventDate" required /></label>
+                <label class="field"><span>Time</span><input type="time" name="eventTime" /></label>
+                <label class="field"><span>Venue</span><input name="venue" placeholder="Venue" /></label>
+                <label class="field full-width"><span>Description</span><textarea name="description" required placeholder="What is this event about?"></textarea></label>
+                <button class="button button-primary full-width" type="submit" id="eventSubmit">Add Event</button>
+              </form>
+            `
+          })
+        : ""
+    }
+    ${panel({
+      eyebrow: "Calendar",
+      title: "Upcoming events",
+      body: upcoming.length ? `<section class="event-grid">${upcoming.map(eventCard).join("")}</section>` : emptyState("No upcoming events scheduled.")
+    })}
+    ${past.length ? panel({ eyebrow: "Archive", title: "Past events", body: `<section class="event-grid">${past.map(eventCard).join("")}</section>` }) : ""}
+  `;
+
+  const form = document.getElementById("eventForm");
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+    const id = payload.eventId;
+    delete payload.eventId;
+    try {
+      if (id) {
+        await api(`/events/${id}`, { method: "PUT", body: JSON.stringify(payload) });
+        showToast("Event updated.");
+      } else {
+        await api("/events", { method: "POST", body: JSON.stringify(payload) });
+        showToast("Event created.");
+      }
+      await renderEventsPage();
+    } catch (error) {
+      showToast(error.message, "error");
+    }
+  });
+
+  document.querySelectorAll("[data-event-edit]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const target = data.events.find((e) => String(e.id) === button.dataset.eventEdit);
+      if (!target || !form) return;
+      form.eventId.value = target.id;
+      form.title.value = target.title;
+      form.category.value = target.category;
+      form.eventDate.value = target.event_date;
+      form.eventTime.value = target.event_time || "";
+      form.venue.value = target.venue || "";
+      form.description.value = target.description;
+      document.getElementById("eventSubmit").textContent = "Update Event";
+      form.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  });
+
+  document.querySelectorAll("[data-event-delete]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      try {
+        await api(`/events/${button.dataset.eventDelete}`, { method: "DELETE" });
+        showToast("Event deleted.");
+        await renderEventsPage();
+      } catch (error) {
+        button.disabled = false;
+        showToast(error.message, "error");
+      }
+    });
+  });
+}
+
+// ===========================================================================
+// Complaints
+// ===========================================================================
+async function renderComplaintsPage() {
+  const pageContent = document.getElementById("pageContent");
+
+  if (STATE.user.role === "student") {
+    const data = await api("/complaints/my");
+    const open = data.complaints.filter((c) => c.status !== "resolved");
+    const categories = ["academic", "infrastructure", "hostel", "faculty", "administration", "general"]
+      .map((c) => `<option value="${c}">${c.charAt(0).toUpperCase() + c.slice(1)}</option>`)
+      .join("");
+
+    pageContent.innerHTML = `
+      ${createStatsGrid([
+        { label: "Raised", value: String(data.complaints.length), icon: "complaints" },
+        { label: "Open", value: String(open.length), icon: "notices" },
+        { label: "Resolved", value: String(data.complaints.length - open.length), icon: "results" },
+        { label: "In progress", value: String(data.complaints.filter((c) => c.status === "in_progress").length), icon: "attendance" }
+      ])}
+      ${panel({
+        eyebrow: "Raise",
+        title: "Submit a complaint",
+        body: `
+          <form id="complaintForm" class="form-grid">
+            <label class="field"><span>Category</span><select name="category">${categories}</select></label>
+            <label class="field"><span>Subject</span><input name="subject" required placeholder="Brief subject" /></label>
+            <label class="field full-width"><span>Description</span><textarea name="description" required placeholder="Describe the issue in detail"></textarea></label>
+            <button class="button button-primary full-width" type="submit">Submit Complaint</button>
+          </form>
+        `
+      })}
+      ${panel({
+        eyebrow: "History",
+        title: "Your complaints",
+        body: data.complaints.length
+          ? `<section class="list-grid">${data.complaints
+              .map(
+                (c) => `
+                  <article class="list-card">
+                    <div class="meta-row">${statusBadge(c.status.replace("_", " "))} ${tag(c.category)}</div>
+                    <h3 style="margin:10px 0 6px;">${escapeHtml(c.subject)}</h3>
+                    <p>${escapeHtml(c.description)}</p>
+                    ${c.response ? `<div class="explanation"><strong>Response${c.responded_by_name ? " · " + escapeHtml(c.responded_by_name) : ""}</strong>${escapeHtml(c.response)}</div>` : `<div class="muted-text">Awaiting response.</div>`}
+                    <div class="muted-text" style="margin-top:8px;">Raised ${formatDate(c.created_at)}</div>
+                  </article>`
+              )
+              .join("")}</section>`
+          : emptyState("You have not raised any complaints yet.")
+      })}
+    `;
+
+    document.getElementById("complaintForm")?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+      try {
+        await api("/complaints", { method: "POST", body: JSON.stringify(Object.fromEntries(formData.entries())) });
+        showToast("Complaint submitted.");
+        await renderComplaintsPage();
+      } catch (error) {
+        showToast(error.message, "error");
+      }
+    });
+    return;
+  }
+
+  // Admin / faculty view
+  const data = await api("/complaints");
+  const open = data.complaints.filter((c) => c.status !== "resolved");
+
+  pageContent.innerHTML = `
+    ${createStatsGrid([
+      { label: "Total", value: String(data.complaints.length), icon: "complaints" },
+      { label: "Open", value: String(data.complaints.filter((c) => c.status === "open").length), icon: "notices" },
+      { label: "In progress", value: String(data.complaints.filter((c) => c.status === "in_progress").length), icon: "attendance" },
+      { label: "Resolved", value: String(data.complaints.filter((c) => c.status === "resolved").length), icon: "results" }
+    ])}
+    ${panel({
+      eyebrow: "Inbox",
+      title: "Student complaints",
+      body: data.complaints.length
+        ? `<section class="list-grid">${data.complaints
+            .map(
+              (c) => `
+                <article class="list-card">
+                  <div class="split-row">
+                    <div>
+                      <div class="meta-row">${statusBadge(c.status.replace("_", " "))} ${tag(c.category)}</div>
+                      <h3 style="margin:10px 0 4px;">${escapeHtml(c.subject)}</h3>
+                      <div class="muted-text">${escapeHtml(c.student_name)} &middot; ${escapeHtml(c.roll_number)} &middot; ${formatDate(c.created_at)}</div>
+                    </div>
+                    ${
+                      STATE.user.role === "admin"
+                        ? `<button class="button button-danger button-small" type="button" data-complaint-delete="${c.id}">Delete</button>`
+                        : ""
+                    }
+                  </div>
+                  <p style="margin-top:10px;">${escapeHtml(c.description)}</p>
+                  <form class="compact-form" data-complaint-id="${c.id}">
+                    <div class="form-grid">
+                      <label class="field"><span>Status</span>
+                        <select name="status">
+                          <option value="open"${c.status === "open" ? " selected" : ""}>Open</option>
+                          <option value="in_progress"${c.status === "in_progress" ? " selected" : ""}>In progress</option>
+                          <option value="resolved"${c.status === "resolved" ? " selected" : ""}>Resolved</option>
+                        </select>
+                      </label>
+                      <label class="field full-width"><span>Response</span><textarea name="response" placeholder="Reply to the student">${escapeHtml(c.response || "")}</textarea></label>
+                    </div>
+                    <button class="button button-primary button-small" type="submit">Save Response</button>
+                  </form>
+                </article>`
+            )
+            .join("")}</section>`
+        : emptyState("No complaints have been raised yet.")
+    })}
+  `;
+
+  document.querySelectorAll("[data-complaint-id]").forEach((form) => {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+      try {
+        await api(`/complaints/${event.currentTarget.dataset.complaintId}`, {
+          method: "PUT",
+          body: JSON.stringify(Object.fromEntries(formData.entries()))
+        });
+        showToast("Complaint updated.");
+        await renderComplaintsPage();
+      } catch (error) {
+        showToast(error.message, "error");
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-complaint-delete]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      try {
+        await api(`/complaints/${button.dataset.complaintDelete}`, { method: "DELETE" });
+        showToast("Complaint deleted.");
+        await renderComplaintsPage();
+      } catch (error) {
+        button.disabled = false;
+        showToast(error.message, "error");
+      }
+    });
+  });
+}
+
+// ===========================================================================
+// Disciplinary / conduct records
+// ===========================================================================
+const CONDUCT_TYPES = ["warning", "note", "fine", "suspension"];
+
+async function renderDisciplinaryPage() {
+  const pageContent = document.getElementById("pageContent");
+
+  if (STATE.user.role === "student") {
+    const data = await api("/disciplinary/my");
+    pageContent.innerHTML = `
+      ${createStatsGrid([
+        { label: "Records", value: String(data.records.length), icon: "disciplinary" },
+        { label: "Warnings", value: String(data.records.filter((r) => r.action_type === "warning").length), icon: "notices" },
+        { label: "Notes", value: String(data.records.filter((r) => r.action_type === "note").length), icon: "results" },
+        { label: "Serious", value: String(data.records.filter((r) => ["fine", "suspension"].includes(r.action_type)).length), icon: "dashboard" }
+      ])}
+      ${panel({
+        eyebrow: "Conduct",
+        title: "Your conduct record",
+        body: data.records.length
+          ? `<section class="list-grid">${data.records
+              .map(
+                (r) => `
+                  <article class="list-card conduct-${escapeHtml(r.action_type)}">
+                    <div class="meta-row">${statusBadge(r.action_type)} ${tag(formatDate(r.action_date))}</div>
+                    <p style="margin:10px 0 6px;">${escapeHtml(r.reason)}</p>
+                    ${r.remarks ? `<div class="muted-text">${escapeHtml(r.remarks)}</div>` : ""}
+                    ${r.recorded_by_name ? `<div class="muted-text" style="margin-top:6px;">Recorded by ${escapeHtml(r.recorded_by_name)}</div>` : ""}
+                  </article>`
+              )
+              .join("")}</section>`
+          : emptyState("You have a clean record — nothing here.")
+      })}
+    `;
+    return;
+  }
+
+  // Admin / faculty
+  const canDelete = STATE.user.role === "admin";
+  const [data, students] = await Promise.all([api("/disciplinary"), fetchSelectableStudents()]);
+  const typeOptions = CONDUCT_TYPES.map((t) => `<option value="${t}">${t.charAt(0).toUpperCase() + t.slice(1)}</option>`).join("");
+
+  pageContent.innerHTML = `
+    ${createStatsGrid([
+      { label: "Records", value: String(data.records.length), icon: "disciplinary" },
+      { label: "Warnings", value: String(data.records.filter((r) => r.action_type === "warning").length), icon: "notices" },
+      { label: "Notes", value: String(data.records.filter((r) => r.action_type === "note").length), icon: "results" },
+      { label: "Students", value: String(students.length), icon: "students" }
+    ])}
+    ${panel({
+      eyebrow: "Record",
+      title: "Add a conduct record",
+      body: `
+        <form id="conductForm" class="form-grid">
+          <label class="field"><span>Student</span><select name="studentId" required><option value="">Select student</option>${studentOptions(students)}</select></label>
+          <label class="field"><span>Type</span><select name="actionType">${typeOptions}</select></label>
+          <label class="field"><span>Date</span><input type="date" name="actionDate" required /></label>
+          <label class="field full-width"><span>Reason</span><textarea name="reason" required placeholder="What happened?"></textarea></label>
+          <label class="field full-width"><span>Remarks (optional)</span><input name="remarks" placeholder="Additional notes" /></label>
+          <button class="button button-primary full-width" type="submit">Add Record</button>
+        </form>
+      `
+    })}
+    ${createTableCard({
+      title: "All conduct records",
+      subtitle: "Visible to the student and teachers",
+      headers: canDelete ? ["Student", "Type", "Reason", "Date", "Recorded by", ""] : ["Student", "Type", "Reason", "Date", "Recorded by"],
+      rows: data.records.map(
+        (r) => `
+          <tr>
+            <td>${escapeHtml(r.student_name)}<div class="muted-text">${escapeHtml(r.roll_number)}</div></td>
+            <td>${statusBadge(r.action_type)}</td>
+            <td>${escapeHtml(r.reason)}${r.remarks ? `<div class="muted-text">${escapeHtml(r.remarks)}</div>` : ""}</td>
+            <td>${formatDate(r.action_date)}</td>
+            <td>${escapeHtml(r.recorded_by_name || "-")}</td>
+            ${canDelete ? `<td><button class="button button-danger button-small" type="button" data-conduct-delete="${r.id}">Delete</button></td>` : ""}
+          </tr>`
+      ),
+      emptyMessage: "No conduct records yet."
+    })}
+  `;
+
+  document.getElementById("conductForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    try {
+      await api("/disciplinary", { method: "POST", body: JSON.stringify(Object.fromEntries(formData.entries())) });
+      showToast("Conduct record added.");
+      await renderDisciplinaryPage();
+    } catch (error) {
+      showToast(error.message, "error");
+    }
+  });
+
+  document.querySelectorAll("[data-conduct-delete]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      try {
+        await api(`/disciplinary/${button.dataset.conductDelete}`, { method: "DELETE" });
+        button.closest("tr")?.remove();
+        showToast("Record removed.");
+      } catch (error) {
+        button.disabled = false;
+        showToast(error.message, "error");
+      }
+    });
+  });
+}
+
+// ===========================================================================
+// Hall tickets
+// ===========================================================================
+async function renderHallTicketsPage() {
+  const pageContent = document.getElementById("pageContent");
+
+  if (STATE.user.role === "student") {
+    const data = await api("/hall-tickets/my");
+    pageContent.innerHTML = `
+      ${createStatsGrid([
+        { label: "Hall tickets", value: String(data.tickets.length), icon: "halltickets" },
+        { label: "Upcoming", value: String(data.tickets.filter((t) => t.exam_date >= new Date().toISOString().slice(0, 10)).length), icon: "attendance" },
+        { label: "Halls", value: String(new Set(data.tickets.map((t) => t.hall)).size), icon: "dashboard" },
+        { label: "Subjects", value: String(new Set(data.tickets.map((t) => t.subject)).size), icon: "results" }
+      ])}
+      ${
+        data.tickets.length
+          ? `<section class="ticket-grid">${data.tickets.map(hallTicketCard).join("")}</section>`
+          : panel({ title: "No hall tickets", body: emptyState("Your hall tickets will appear here once released by the administration.") })
+      }
+    `;
+    return;
+  }
+
+  const canIssue = STATE.user.role === "admin";
+  const [data, students] = await Promise.all([api("/hall-tickets"), canIssue ? fetchSelectableStudents() : Promise.resolve([])]);
+
+  pageContent.innerHTML = `
+    ${createStatsGrid([
+      { label: "Issued", value: String(data.tickets.length), icon: "halltickets" },
+      { label: "Students", value: String(new Set(data.tickets.map((t) => t.roll_number)).size), icon: "students" },
+      { label: "Exams", value: String(new Set(data.tickets.map((t) => t.exam_name)).size), icon: "results" },
+      { label: "Halls", value: String(new Set(data.tickets.map((t) => t.hall)).size), icon: "dashboard" }
+    ])}
+    ${
+      canIssue
+        ? panel({
+            eyebrow: "Issue",
+            title: "Issue a hall ticket",
+            body: `
+              <form id="hallTicketForm" class="form-grid">
+                <label class="field"><span>Student</span><select name="studentId" required><option value="">Select student</option>${studentOptions(students)}</select></label>
+                <label class="field"><span>Examination</span><input name="examName" required placeholder="e.g. End Semester Exam - Sem 5" /></label>
+                <label class="field"><span>Subject</span><input name="subject" required placeholder="Subject and code" /></label>
+                <label class="field"><span>Date</span><input type="date" name="examDate" required /></label>
+                <label class="field"><span>Time</span><input type="time" name="examTime" required /></label>
+                <label class="field"><span>Hall</span><input name="hall" required placeholder="Block A - Hall 1" /></label>
+                <label class="field"><span>Seat No.</span><input name="seatNo" required placeholder="A-014" /></label>
+                <button class="button button-primary full-width" type="submit">Issue Hall Ticket</button>
+              </form>
+            `
+          })
+        : ""
+    }
+    ${createTableCard({
+      title: "Issued hall tickets",
+      headers: canIssue ? ["Student", "Exam", "Subject", "Date", "Hall", "Seat", ""] : ["Student", "Exam", "Subject", "Date", "Hall", "Seat"],
+      rows: data.tickets.map(
+        (t) => `
+          <tr>
+            <td>${escapeHtml(t.student_name)}<div class="muted-text">${escapeHtml(t.roll_number)}</div></td>
+            <td>${escapeHtml(t.exam_name)}</td>
+            <td>${escapeHtml(t.subject)}</td>
+            <td>${formatDate(t.exam_date)} ${escapeHtml(formatTime(t.exam_time))}</td>
+            <td>${escapeHtml(t.hall)}</td>
+            <td>${escapeHtml(t.seat_no)}</td>
+            ${canIssue ? `<td><button class="button button-danger button-small" type="button" data-ticket-delete="${t.id}">Delete</button></td>` : ""}
+          </tr>`
+      ),
+      emptyMessage: "No hall tickets issued yet."
+    })}
+  `;
+
+  document.getElementById("hallTicketForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    try {
+      await api("/hall-tickets", { method: "POST", body: JSON.stringify(Object.fromEntries(formData.entries())) });
+      showToast("Hall ticket issued.");
+      await renderHallTicketsPage();
+    } catch (error) {
+      showToast(error.message, "error");
+    }
+  });
+
+  document.querySelectorAll("[data-ticket-delete]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      try {
+        await api(`/hall-tickets/${button.dataset.ticketDelete}`, { method: "DELETE" });
+        button.closest("tr")?.remove();
+        showToast("Hall ticket deleted.");
+      } catch (error) {
+        button.disabled = false;
+        showToast(error.message, "error");
+      }
+    });
+  });
+}
+
+function hallTicketCard(t) {
+  return `
+    <article class="ticket-card">
+      <div class="ticket-head">
+        <div>
+          <span class="ticket-college">DIET Engineering College</span>
+          <h3>Hall Ticket</h3>
+        </div>
+        <div class="ticket-seal">${escapeHtml(initials(t.student_name))}</div>
+      </div>
+      <div class="ticket-grid-info">
+        <div><span>Student</span><strong>${escapeHtml(t.student_name)}</strong></div>
+        <div><span>Roll No.</span><strong>${escapeHtml(t.roll_number)}</strong></div>
+        <div><span>Registration</span><strong>${escapeHtml(t.registration_number || "-")}</strong></div>
+        <div><span>Branch</span><strong>${escapeHtml(t.branch_name || t.department_name || "-")}</strong></div>
+        <div><span>Examination</span><strong>${escapeHtml(t.exam_name)}</strong></div>
+        <div><span>Subject</span><strong>${escapeHtml(t.subject)}</strong></div>
+        <div><span>Date &amp; Time</span><strong>${formatDate(t.exam_date)} &middot; ${escapeHtml(formatTime(t.exam_time))}</strong></div>
+        <div><span>Hall</span><strong>${escapeHtml(t.hall)}</strong></div>
+        <div><span>Seat No.</span><strong>${escapeHtml(t.seat_no)}</strong></div>
+      </div>
+      <div class="ticket-foot">
+        <span class="muted-text">Bring a valid photo ID to the examination hall.</span>
+        <button class="button button-secondary button-small" type="button" onclick="window.print()">Print</button>
+      </div>
+    </article>`;
+}
+
+// ===========================================================================
+// About the College
+// ===========================================================================
+async function renderAboutPage() {
+  const pageContent = document.getElementById("pageContent");
+  const { profile, stats } = await api("/college/info");
+
+  pageContent.innerHTML = `
+    ${panel({
+      eyebrow: "About",
+      title: profile.name,
+      body: `
+        <p class="about-tagline">${escapeHtml(profile.tagline)}</p>
+        <div class="about-meta">
+          <div><span>Established</span><strong>${escapeHtml(profile.established)}</strong></div>
+          <div><span>Accreditation</span><strong>${escapeHtml(profile.accreditation)}</strong></div>
+          <div><span>Affiliation</span><strong>${escapeHtml(profile.affiliation)}</strong></div>
+        </div>
+      `
+    })}
+    ${createStatsGrid([
+      { label: "Departments", value: String(stats.departments), icon: "faculty" },
+      { label: "Branches", value: String(stats.branches), icon: "timetable" },
+      { label: "Students", value: String(stats.students), icon: "students" },
+      { label: "Upcoming events", value: String(stats.upcomingEvents), icon: "events" }
+    ])}
+    <section class="section-grid two-column">
+      ${panel({ eyebrow: "Purpose", title: "Vision", body: `<p>${escapeHtml(profile.vision)}</p>` })}
+      ${panel({
+        eyebrow: "Purpose",
+        title: "Mission",
+        body: `<ul class="reco-list">${profile.mission.map((m) => `<li>${escapeHtml(m)}</li>`).join("")}</ul>`
+      })}
+    </section>
+    ${panel({
+      eyebrow: "Campus",
+      title: "Highlights",
+      body: `<ul class="feedback-list">${profile.highlights.map((h) => `<li>${escapeHtml(h)}</li>`).join("")}</ul>`
+    })}
+    ${panel({
+      eyebrow: "Reach us",
+      title: "Contact",
+      body: `
+        <div class="about-meta">
+          <div><span>Address</span><strong>${escapeHtml(profile.address)}</strong></div>
+          <div><span>Email</span><strong>${escapeHtml(profile.email)}</strong></div>
+          <div><span>Phone</span><strong>${escapeHtml(profile.phone)}</strong></div>
+          <div><span>Website</span><strong>${escapeHtml(profile.website)}</strong></div>
+        </div>
+      `
+    })}
+  `;
+}
+
+// ===========================================================================
+// Profile / digital ID card
+// ===========================================================================
+async function renderProfilePage() {
+  const pageContent = document.getElementById("pageContent");
+  const user = STATE.user;
+  const role = user.role;
+  const sp = user.studentProfile;
+  const fp = user.facultyProfile;
+
+  const idRows =
+    role === "student" && sp
+      ? [
+          ["Roll Number", sp.rollNumber],
+          ["Registration", sp.registrationNumber],
+          ["Department", user.departmentName],
+          ["Branch", sp.branchName],
+          ["Semester", sp.semester ? "Semester " + sp.semester : null],
+          ["Section", sp.section]
+        ]
+      : role === "faculty" && fp
+        ? [
+            ["Employee Code", fp.employeeCode],
+            ["Designation", fp.designation],
+            ["Department", user.departmentName],
+            ["Branch", fp.branchName]
+          ]
+        : [
+            ["Role", "Administrator"],
+            ["Email", user.email]
+          ];
+
+  const cardLabel = role === "student" ? "Student Identity Card" : role === "faculty" ? "Faculty Identity Card" : "Staff Identity Card";
+
+  pageContent.innerHTML = `
+    <section class="section-grid two-column">
+      ${panel({
+        eyebrow: "Identity",
+        title: "Digital ID card",
+        body: `
+          <div class="id-card" id="idCard">
+            <div class="id-card-top">
+              <div>
+                <span class="id-college">DIET Engineering College</span>
+                <span class="id-type">${escapeHtml(cardLabel)}</span>
+              </div>
+              <span class="id-role-badge">${escapeHtml(getRoleLabel(role))}</span>
+            </div>
+            <div class="id-card-body">
+              <div class="id-avatar">${escapeHtml(initials(user.fullName))}</div>
+              <div class="id-details">
+                <h3>${escapeHtml(user.fullName)}</h3>
+                <p class="muted-text">${escapeHtml(user.email)}</p>
+                <div class="id-fields">
+                  ${idRows
+                    .filter(([, value]) => value)
+                    .map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(String(value))}</strong></div>`)
+                    .join("")}
+                </div>
+              </div>
+            </div>
+            <div class="id-card-foot">
+              <span>Valid for Academic Year 2025-26</span>
+              <span>dietcollege.edu</span>
+            </div>
+          </div>
+          <button class="button button-secondary full-width" type="button" style="margin-top:16px;" onclick="window.print()">Print ID Card</button>
+        `
+      })}
+      ${panel({
+        eyebrow: "Account",
+        title: "Profile details",
+        body: `
+          <div class="about-meta">
+            <div><span>Full name</span><strong>${escapeHtml(user.fullName)}</strong></div>
+            <div><span>Email</span><strong>${escapeHtml(user.email)}</strong></div>
+            <div><span>Role</span><strong>${escapeHtml(getRoleLabel(role))}</strong></div>
+            ${idRows.filter(([, v]) => v).map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(String(value))}</strong></div>`).join("")}
+          </div>
+        `
+      })}
+    </section>
+  `;
+}
+
+// ===========================================================================
+// KPI count-up — stat values ease from 0 to their target on first render.
+// Tabular figures (set in CSS) keep the width stable, so nothing jitters.
+// ===========================================================================
+(() => {
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const animated = new WeakSet();
+  const NUMERIC = /^(\d{1,3}(?:,\d{3})*|\d{1,6})(%?)$/;
+
+  function countUp(el) {
+    if (animated.has(el)) return;
+    animated.add(el);
+
+    const raw = el.textContent.trim();
+    const match = NUMERIC.exec(raw);
+    if (!match || reduced.matches) return;
+
+    const target = Number(match[1].replace(/,/g, ""));
+    const suffix = match[2] || "";
+    if (!Number.isFinite(target) || target === 0) return;
+
+    const hasGrouping = match[1].includes(",");
+    const format = (value) => (hasGrouping ? value.toLocaleString("en-IN") : String(value)) + suffix;
+    const duration = 620;
+    const start = performance.now();
+
+    const tick = (now) => {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = format(Math.round(target * eased));
+      if (t < 1) requestAnimationFrame(tick);
+      else el.textContent = raw;
+    };
+    requestAnimationFrame(tick);
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const content = document.getElementById("pageContent");
+    if (!content) return;
+
+    const scan = () => content.querySelectorAll(".stat-card strong").forEach(countUp);
+    scan();
+    new MutationObserver(scan).observe(content, { childList: true, subtree: true });
+  });
+})();
