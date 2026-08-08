@@ -6,10 +6,9 @@ const rateLimit = require("express-rate-limit");
 
 const authMiddleware = require("../middleware/authMiddleware");
 const { db, getUserAccountByEmail, getUserProfileById } = require("../config/db");
+const { JWT_SECRET, JWT_EXPIRES_IN } = require("../config/env");
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || "REDACTED_DEV_SECRET";
-const JWT_EXPIRES_IN = "8h";
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const authLimiter = rateLimit({

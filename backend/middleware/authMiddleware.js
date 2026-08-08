@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { getUserProfileById } = require("../config/db");
-
-const JWT_SECRET = process.env.JWT_SECRET || "REDACTED_DEV_SECRET";
+const { JWT_SECRET } = require("../config/env");
 
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization || "";
