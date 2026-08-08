@@ -6,6 +6,7 @@ const fs = require("fs");
 const rateLimit = require("express-rate-limit");
 
 const { initializeDatabase } = require("./config/db");
+const { PORT } = require("./config/env");
 
 const authRoutes = require("./routes/authRoutes");
 const studentRoutes = require("./routes/studentRoutes");
@@ -21,7 +22,6 @@ const academicRoutes = require("./routes/academicRoutes");
 const studentRelationshipRoutes = require("./routes/studentRelationshipRoutes");
 
 const app = express();
-const PORT = Number(process.env.PORT) || 3000;
 const frontendDir = path.join(__dirname, "..", "frontend");
 const uploadsDir = path.join(__dirname, "uploads");
 
