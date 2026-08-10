@@ -1080,11 +1080,42 @@ async function initializeDatabase() {
   bootstrap();
 }
 
+// Storage-layer metrics for the diagnostics endpoint: main file size, the WAL
+// sidecar size (grows between checkpoints), and the active journal mode.
+function getDbDiagnostics() {
+  const sizeOf = (filePath) => {
+    try {
+      return fs.statSync(filePath).size;
+    } catch (_error) {
+      return 0;
+    }
+  };
+
+  let journalMode = null;
+  let pageCount = null;
+  try {
+    journalMode = db.database.pragma("journal_mode", { simple: true });
+    pageCount = db.database.pragma("page_count", { simple: true });
+  } catch (_error) {
+    /* database not ready */
+  }
+
+  return {
+    file: databaseFile,
+    sizeBytes: sizeOf(databasePath),
+    walBytes: sizeOf(`${databasePath}-wal`),
+    journalMode,
+    pageCount
+  };
+}
+
 module.exports = {
   db,
   getUserAccountByEmail,
   getUserProfileById,
   getStudentProfileByUserId,
   getFacultyProfileByUserId,
-  initializeDatabase
+  getDbDiagnostics,
+  initializeDatabase,
+  databaseDir
 };

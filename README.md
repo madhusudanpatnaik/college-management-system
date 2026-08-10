@@ -446,7 +446,30 @@ Returns `200 OK` with database connectivity status:
 }
 ```
 
-Returns `503 Service Unavailable` if the database is unreachable.
+Returns `503 Service Unavailable` if the database is unreachable. This is the
+lightweight, public liveness probe intended for load balancers.
+
+### Diagnostics (admin-only)
+
+```
+GET /api/diagnostics
+```
+
+Deeper operational metrics, gated to `admin` (memory/disk figures should not be
+public): process memory, event-loop delay (mean/p99/max — a signal of whether
+synchronous DB work is blocking the loop), database file + WAL sizes and journal
+mode, `uploads/` footprint, free/total disk on the DB volume, and live SSE
+connection count + backend (`memory` or `redis`).
+
+### Scaling notes
+
+- **Database writes** — SQLite runs in WAL mode (concurrent reads) with a 5s
+  busy timeout. Under multi-writer contention that exceeds the timeout, the API
+  returns `503` with `Retry-After` (never a bare 500). For very high write
+  concurrency, migrate to PostgreSQL.
+- **Real-time across instances** — for a load-balanced, multi-node deployment,
+  set `REDIS_URL` and `npm install ioredis`; SSE events then fan out across all
+  instances via Redis pub/sub. Single-node needs nothing (in-memory delivery).
 
 ### Production Checklist
 

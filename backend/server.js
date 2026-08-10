@@ -14,9 +14,16 @@ const compression = require("compression");
 const path = require("path");
 const fs = require("fs");
 const rateLimit = require("express-rate-limit");
+const { monitorEventLoopDelay } = require("perf_hooks");
 
-const { initializeDatabase, db } = require("./config/db");
+const { initializeDatabase, db, getDbDiagnostics, databaseDir } = require("./config/db");
 const authMiddleware = require("./middleware/authMiddleware");
+const roleMiddleware = require("./middleware/roleMiddleware");
+
+// Sample event-loop delay continuously; the diagnostics endpoint reports it as a
+// signal of whether synchronous work (e.g. large queries) is blocking the loop.
+const eventLoopDelay = monitorEventLoopDelay({ resolution: 20 });
+eventLoopDelay.enable();
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -39,7 +46,7 @@ const disciplinaryRoutes = require("./routes/disciplinaryRoutes");
 const hallTicketRoutes = require("./routes/hallTicketRoutes");
 const collegeRoutes = require("./routes/collegeRoutes");
 const realtimeRoutes = require("./routes/realtimeRoutes");
-const { broadcast } = require("./config/realtime");
+const { broadcast, clientCount, realtimeBackend } = require("./config/realtime");
 
 // Resources whose mutations should NOT trigger a real-time broadcast (auth flows
 // and per-user actions that other clients don't need to react to).
@@ -123,13 +130,17 @@ app.use("/api", generalLimiter);
 // Without this, anyone can enumerate and download files by guessing the filename.
 app.use("/uploads", authMiddleware, express.static(uploadsDir));
 
-// Static assets: HTML revalidates on every request (so deploys show up
-// immediately), while CSS/JS/images/fonts are cached for a day and served
-// from browser cache on repeat visits.
+// Static asset caching. Filenames here are NOT content-hashed (styles.css,
+// app.js), so an aggressive max-age would serve stale JS/CSS for a day after a
+// deploy. Instead:
+//   - HTML + code (CSS/JS): "no-cache" — the browser keeps a copy but revalidates
+//     via ETag on each load, getting a cheap 304 when unchanged and fresh bytes
+//     immediately after a deploy.
+//   - Media (images/fonts): cached for a day; these rarely change and are large.
 app.use(
   express.static(frontendDir, {
     setHeaders: (res, filePath) => {
-      if (filePath.endsWith(".html")) {
+      if (/\.(html|css|js)$/i.test(filePath)) {
         res.setHeader("Cache-Control", "no-cache");
       } else {
         res.setHeader("Cache-Control", "public, max-age=86400");
@@ -147,6 +158,74 @@ app.get("/api/health", (_req, res) => {
   } catch (_error) {
     res.status(503).json({ status: "degraded", uptime: process.uptime(), database: "unreachable" });
   }
+});
+
+// Detailed operational metrics — admin-only, since memory/disk/internal figures
+// should not be exposed publicly. /api/health stays the lightweight, public
+// liveness probe for load balancers; this is the deep readiness/diagnostics view.
+app.get("/api/diagnostics", authMiddleware, roleMiddleware("admin"), (_req, res) => {
+  const toMB = (bytes) => Math.round((bytes / 1048576) * 100) / 100;
+  const toMs = (nanos) => Math.round((nanos / 1e6) * 100) / 100;
+  const mem = process.memoryUsage();
+  const dbInfo = getDbDiagnostics();
+
+  // uploads/ footprint
+  let uploads = { files: 0, sizeMB: 0 };
+  try {
+    const entries = fs.readdirSync(uploadsDir);
+    const bytes = entries.reduce((sum, name) => {
+      try {
+        return sum + fs.statSync(path.join(uploadsDir, name)).size;
+      } catch (_error) {
+        return sum;
+      }
+    }, 0);
+    uploads = { files: entries.length, sizeMB: toMB(bytes) };
+  } catch (_error) {
+    /* uploads dir unavailable */
+  }
+
+  // free/total disk on the database volume (Node 18.15+)
+  let disk = null;
+  try {
+    const fsStat = fs.statfsSync(databaseDir);
+    disk = {
+      freeMB: toMB(fsStat.bavail * fsStat.bsize),
+      totalMB: toMB(fsStat.blocks * fsStat.bsize)
+    };
+  } catch (_error) {
+    /* statfs unsupported on this platform */
+  }
+
+  res.json({
+    status: "ok",
+    uptimeSeconds: Math.round(process.uptime()),
+    node: process.version,
+    pid: process.pid,
+    memoryMB: {
+      rss: toMB(mem.rss),
+      heapUsed: toMB(mem.heapUsed),
+      heapTotal: toMB(mem.heapTotal),
+      external: toMB(mem.external)
+    },
+    eventLoopDelayMs: {
+      mean: toMs(eventLoopDelay.mean),
+      p99: toMs(eventLoopDelay.percentile(99)),
+      max: toMs(eventLoopDelay.max)
+    },
+    database: {
+      file: dbInfo.file,
+      sizeMB: toMB(dbInfo.sizeBytes),
+      walSizeMB: toMB(dbInfo.walBytes),
+      journalMode: dbInfo.journalMode
+    },
+    uploads,
+    disk,
+    realtime: {
+      activeConnections: clientCount(),
+      backend: realtimeBackend()
+    }
+  });
 });
 
 // Public configuration endpoint — tells the frontend whether demo mode is active.
@@ -209,7 +288,23 @@ app.use("/api", (_req, res) => {
   res.status(404).json({ message: "API route not found." });
 });
 
+// Database lock/contention codes (single-writer SQLite under concurrent writes).
+const DB_BUSY_CODES = new Set([
+  "SQLITE_BUSY",
+  "SQLITE_BUSY_SNAPSHOT",
+  "SQLITE_BUSY_RECOVERY",
+  "SQLITE_LOCKED"
+]);
+
 app.use((err, _req, res, _next) => {
+  // Under heavy concurrent writes SQLite can exceed its busy timeout. Return a
+  // clean 503 with Retry-After so the client backs off and retries, instead of
+  // a generic 500.
+  if (DB_BUSY_CODES.has(err.code)) {
+    res.setHeader("Retry-After", "1");
+    return res.status(503).json({ message: "The server is busy, please retry in a moment." });
+  }
+
   // Map multer upload failures (oversized files, etc.) to 400 instead of 500.
   let status = err.status || 500;
   if (err.code === "LIMIT_FILE_SIZE") {
