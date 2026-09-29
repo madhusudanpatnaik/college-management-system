@@ -8,6 +8,12 @@
 ![Tests](https://img.shields.io/badge/Tests-103%20passing-22c55e?style=flat-square)
 ![License](https://img.shields.io/badge/License-Academic%20Use%20Only-dc2626?style=flat-square)
 
+> **Attribution** — this project was originally created by **M Sri Anshu Venkat**.
+> Original repository: <https://github.com/msav2007/college-management-system>
+>
+> This copy is kept for learning and academic reference under the terms in
+> [`LICENSE`](LICENSE). It is not offered as original work.
+
 A production-grade, role-based college management system built with **Node.js**, **Express**, **JWT authentication**, and **SQL.js**. Features a clean dark-themed dashboard for Admin, Faculty, and Student roles with 17 dedicated modules covering academics, attendance, assignments, results, fees, timetables, notices, materials, outing workflows, and placement preparation.
 
 ---
