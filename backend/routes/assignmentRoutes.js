@@ -2,7 +2,7 @@ const express = require("express");
 
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
-const { createUploader, removeUploadedFile } = require("../middleware/upload");
+const { createUploader, verifyFileSignature, removeUploadedFile } = require("../middleware/upload");
 const { db, getFacultyProfileByUserId, getStudentProfileByUserId } = require("../config/db");
 const { facultyOwnsCourse } = require("../utils/authorization");
 
@@ -13,7 +13,7 @@ const upload = createUploader("assignment");
 
 router.use(authMiddleware);
 
-router.post("/", roleMiddleware("faculty", "admin"), upload.single("attachment"), (req, res) => {
+router.post("/", roleMiddleware("faculty", "admin"), upload.single("attachment"), verifyFileSignature, (req, res) => {
   const { courseId, title, description, deadline } = req.body;
 
   if (!courseId || !title || !description || !deadline) {

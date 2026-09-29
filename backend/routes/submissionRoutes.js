@@ -2,7 +2,7 @@ const express = require("express");
 
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
-const { createUploader, removeUploadedFile } = require("../middleware/upload");
+const { createUploader, verifyFileSignature, removeUploadedFile } = require("../middleware/upload");
 const { db, getFacultyProfileByUserId, getStudentProfileByUserId } = require("../config/db");
 
 const router = express.Router();
@@ -10,7 +10,7 @@ const upload = createUploader("submission");
 
 router.use(authMiddleware);
 
-router.post("/", roleMiddleware("student"), upload.single("file"), (req, res) => {
+router.post("/", roleMiddleware("student"), upload.single("file"), verifyFileSignature, (req, res) => {
   const { assignmentId, notes = "" } = req.body;
 
   if (!assignmentId || !req.file) {

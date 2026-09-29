@@ -7,7 +7,7 @@ const rateLimit = require("express-rate-limit");
 const authMiddleware = require("../middleware/authMiddleware");
 const { db, getUserAccountByEmail, getUserProfileById } = require("../config/db");
 const { JWT_SECRET, JWT_EXPIRES_IN } = require("../config/auth");
-const { emailPattern } = require("../utils/validation");
+const { emailPattern, validatePassword } = require("../utils/validation");
 
 const router = express.Router();
 
@@ -140,8 +140,9 @@ router.post("/reset-password", passwordResetLimiter, (req, res) => {
     return res.status(400).json({ message: "Token, password, and confirmation are required." });
   }
 
-  if (password.length < 8) {
-    return res.status(400).json({ message: "Password must be at least 8 characters long." });
+  const passwordCheck = validatePassword(password);
+  if (!passwordCheck.valid) {
+    return res.status(400).json({ message: passwordCheck.message });
   }
 
   if (password !== confirmPassword) {

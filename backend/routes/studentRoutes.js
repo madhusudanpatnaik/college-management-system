@@ -5,7 +5,8 @@ const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 const { db, getStudentProfileByUserId } = require("../config/db");
 const { getAssignedFacultyId, getStudentTimetable } = require("../services/studentFacultyService");
-const { emailPattern } = require("../utils/validation");
+const { emailPattern, validatePassword } = require("../utils/validation");
+const { recordAudit } = require("../utils/audit");
 
 const router = express.Router();
 
@@ -128,8 +129,9 @@ router.post("/", roleMiddleware("admin"), (req, res) => {
     return res.status(400).json({ message: "Please enter a valid email address." });
   }
 
-  if (String(password).length < 8) {
-    return res.status(400).json({ message: "Password must be at least 8 characters long." });
+  const passwordCheck = validatePassword(password);
+  if (!passwordCheck.valid) {
+    return res.status(400).json({ message: passwordCheck.message });
   }
 
   const departmentId = getDepartmentId(departmentCode);
@@ -226,6 +228,12 @@ router.post("/", roleMiddleware("admin"), (req, res) => {
   });
 
   const studentId = createStudent();
+  recordAudit(req, {
+    action: "student.create",
+    entity: "student",
+    entityId: studentId,
+    summary: `Created student ${email} (roll ${rollNumber})`
+  });
   return res.status(201).json({ message: "Student created successfully.", studentId });
 });
 
@@ -409,6 +417,12 @@ router.post("/fees", roleMiddleware("admin"), (req, res) => {
       existing.id
     );
 
+    recordAudit(req, {
+      action: "fee.update",
+      entity: "fee",
+      entityId: existing.id,
+      summary: `Fee for student ${studentId} sem ${parsedSemester}: total ${total}, paid ${paid} (${status})`
+    });
     return res.json({ message: "Fee record updated successfully.", feeId: existing.id });
   }
 
@@ -421,6 +435,12 @@ router.post("/fees", roleMiddleware("admin"), (req, res) => {
     )
     .run(Number(studentId), parsedSemester, total, paid, String(dueDate), status);
 
+  recordAudit(req, {
+    action: "fee.create",
+    entity: "fee",
+    entityId: result.lastInsertRowid,
+    summary: `Fee for student ${studentId} sem ${parsedSemester}: total ${total}, paid ${paid} (${status})`
+  });
   return res.status(201).json({ message: "Fee record created successfully.", feeId: result.lastInsertRowid });
 });
 
@@ -467,6 +487,12 @@ router.put("/fees/:id", roleMiddleware("admin"), (req, res) => {
     feeId
   );
 
+  recordAudit(req, {
+    action: "fee.update",
+    entity: "fee",
+    entityId: feeId,
+    summary: `Fee #${feeId} set to total ${total}, paid ${paid} (${status})`
+  });
   return res.json({ message: "Fee record updated successfully." });
 });
 
@@ -504,6 +530,12 @@ router.delete("/:id", roleMiddleware("admin"), (req, res) => {
 
   deleteStudent();
 
+  recordAudit(req, {
+    action: "student.delete",
+    entity: "student",
+    entityId: studentId,
+    summary: `Deleted student #${studentId} (user ${student.user_id}) and all related records`
+  });
   return res.json({ message: "Student deleted successfully." });
 });
 

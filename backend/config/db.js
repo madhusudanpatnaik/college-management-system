@@ -993,6 +993,28 @@ function ensureCommunitySchema() {
   db.prepare("UPDATE disciplinary_actions SET action_type = 'note' WHERE action_type = 'appreciation'").run();
 }
 
+// Append-only audit trail for privileged/financial actions. No FK to users on
+// purpose: audit rows must outlive the actor/target they describe (see
+// utils/audit.js). Indexed on id (descending scan) for the recent-activity view.
+function ensureAuditSchema() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS audit_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      actor_id INTEGER,
+      actor_role TEXT,
+      actor_email TEXT,
+      action TEXT NOT NULL,
+      entity TEXT,
+      entity_id INTEGER,
+      summary TEXT,
+      ip_address TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_audit_log_created ON audit_log (created_at);
+  `);
+}
+
 function seedCommunityData(studentId, adminUserId, facultyUserId) {
   if (db.prepare("SELECT COUNT(*) AS total FROM events").get().total === 0) {
     const insertEvent = db.prepare(
@@ -1068,6 +1090,7 @@ async function initializeDatabase() {
     ensureAcademicSeedData();
     ensurePlacementSchema();
     ensureCommunitySchema();
+    ensureAuditSchema();
 
     // Seed data (demo users with known passwords, sample assignments, etc.)
     // must NEVER run in production — it would create backdoor accounts.

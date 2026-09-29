@@ -228,6 +228,24 @@ app.get("/api/diagnostics", authMiddleware, roleMiddleware("admin"), (_req, res)
   });
 });
 
+// Admin-only audit trail of privileged/financial actions (account create/delete,
+// fee changes). Read-only and paginated by a capped limit.
+app.get("/api/audit", authMiddleware, roleMiddleware("admin"), (req, res) => {
+  const limit = Math.min(Math.max(Number(req.query.limit) || 100, 1), 500);
+  const entries = db
+    .prepare(
+      `
+        SELECT id, actor_id, actor_role, actor_email, action, entity, entity_id, summary, ip_address, created_at
+        FROM audit_log
+        ORDER BY id DESC
+        LIMIT ?
+      `
+    )
+    .all(limit);
+
+  res.json({ entries });
+});
+
 // Public configuration endpoint — tells the frontend whether demo mode is active.
 // NEVER expose secrets or internal config here.
 app.get("/api/config", (_req, res) => {

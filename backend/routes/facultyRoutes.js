@@ -4,7 +4,8 @@ const bcrypt = require("bcryptjs");
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 const { db, getFacultyProfileByUserId } = require("../config/db");
-const { emailPattern } = require("../utils/validation");
+const { emailPattern, validatePassword } = require("../utils/validation");
+const { recordAudit } = require("../utils/audit");
 
 const router = express.Router();
 const allowedDays = new Set(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]);
@@ -55,8 +56,9 @@ router.post("/", roleMiddleware("admin"), (req, res) => {
     return res.status(400).json({ message: "Please enter a valid email address." });
   }
 
-  if (String(password).length < 8) {
-    return res.status(400).json({ message: "Password must be at least 8 characters long." });
+  const passwordCheck = validatePassword(password);
+  if (!passwordCheck.valid) {
+    return res.status(400).json({ message: passwordCheck.message });
   }
 
   const departmentId = getDepartmentId(departmentCode);
@@ -106,6 +108,12 @@ router.post("/", roleMiddleware("admin"), (req, res) => {
   });
 
   const facultyId = createFaculty();
+  recordAudit(req, {
+    action: "faculty.create",
+    entity: "faculty",
+    entityId: facultyId,
+    summary: `Created faculty ${email} (${employeeCode})`
+  });
   return res.status(201).json({ message: "Faculty created successfully.", facultyId });
 });
 
